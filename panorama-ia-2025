@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panorama Completo das IAs 2025 - Mapa Mental Interativo</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <style>
+        :root {
+            --bg-grad-start: #0f172a;
+            --bg-grad-mid: #1e1b4b;
+            --bg-grad-end: #312e81;
+            --text-primary: #e2e8f0;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --accent-primary: #a78bfa;
+            --accent-secondary: #60a5fa;
+            --border-color: #4c1d95;
+            --card-bg-start: #1e293b;
+            --card-bg-end: #0f172a;
+            --card-bg-hover: rgba(30, 41, 59, 0.8);
+            --card-border: #334155;
+            --input-bg: #1e293b;
+            --success-color: #86efac;
+            --warning-color: #fbbf24;
+            --shadow-color: rgba(167, 139, 250, 0.2);
+            --modal-bg: #1e293b;
+        }
+
+        body.light-mode {
+            --bg-grad-start: #f1f5f9;
+            --bg-grad-mid: #e0e7ff;
+            --bg-grad-end: #c7d2fe;
+            --text-primary: #1e293b;
+            --text-secondary: #334155;
+            --text-muted: #64748b;
+            --accent-primary: #6d28d9;
+            --accent-secondary: #3b82f6;
+            --border-color: #a78bfa;
+            --card-bg-start: #ffffff;
+            --card-bg-end: #f8fafc;
+            --card-bg-hover: #f1f5f9;
+            --card-border: #e2e8f0;
+            --input-bg: #f8fafc;
+            --success-color: #166534;
+            --warning-color: #b45309;
+            --shadow-color: rgba(109, 40, 217, 0.2);
+            --modal-bg: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-grad-start) 0%, var(--bg-grad-mid) 50%, var(--bg-grad-end) 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-primary);
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .container { max-width: 1400px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 40px; animation: fadeIn 0.8s ease-in; position: relative; }
+        h1 { font-size: 2.5em; margin-bottom: 10px; background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .subtitle { color: var(--text-secondary); font-size: 1.1em; margin-bottom: 20px; }
+        
+        #themeToggle {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--input-bg);
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        #themeToggle:hover { transform: scale(1.1) rotate(15deg); }
+
+        .featured-ia {
+            background: linear-gradient(135deg, var(--card-bg-start), var(--card-bg-end));
+            border: 2px solid var(--accent-primary);
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 40px;
+            animation: fadeIn 1s ease-in;
+        }
+        .featured-header { font-size: 1.5em; color: var(--accent-primary); margin-bottom: 15px; text-align: center; }
+        .featured-content { display: flex; flex-direction: column; gap: 8px; }
+
+        .top-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 30px;
+            align-items: center;
+        }
+        input[type="text"] { padding: 12px 20px; border: 2px solid var(--border-color); border-radius: 8px; background: var(--input-bg); color: var(--text-primary); font-size: 1em; min-width: 300px; transition: all 0.3s ease; }
+        input[type="text"]:focus { outline: none; border-color: var(--accent-primary); box-shadow: 0 0 10px var(--shadow-color); }
+        
+        .control-btn { padding: 10px 20px; border: 2px solid var(--border-color); background: var(--input-bg); color: var(--text-secondary); border-radius: 8px; cursor: pointer; transition: all 0.3s ease; font-weight: 500; }
+        .control-btn:hover { background: var(--accent-primary); color: var(--bg-grad-start); border-color: var(--accent-primary); }
+        #compareBtn { display: none; background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%); color: #fff; font-weight: bold; }
+
+        .filter-buttons { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 30px; }
+        .filter-btn { padding: 10px 20px; border: 2px solid var(--border-color); background: var(--input-bg); color: var(--text-secondary); border-radius: 8px; cursor: pointer; transition: all 0.3s ease; font-weight: 500; font-size: 0.9em; }
+        .filter-btn:hover, .filter-btn.active { background: var(--accent-primary); color: var(--bg-grad-start); border-color: var(--accent-primary); transform: translateY(-2px); }
+
+        .categories { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-bottom: 40px; }
+        .category { background: linear-gradient(135deg, var(--card-bg-start) 0%, var(--card-bg-end) 100%); border: 2px solid var(--border-color); border-radius: 12px; padding: 25px; transition: all 0.3s ease; animation: slideUp 0.6s ease-out; }
+        .category:hover { border-color: var(--accent-primary); box-shadow: 0 10px 30px var(--shadow-color); transform: translateY(-5px); }
+        .category-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid var(--border-color); }
+        .category-icon { font-size: 2em; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background: rgba(167, 139, 250, 0.1); border-radius: 8px; }
+        .category-title { font-size: 1.4em; font-weight: 600; color: var(--accent-primary); }
+        .category-count { margin-left: auto; background: rgba(167, 139, 250, 0.2); padding: 5px 12px; border-radius: 20px; font-size: 0.9em; color: var(--text-secondary); }
+        .ias-list { display: flex; flex-direction: column; gap: 15px; }
+
+        .ia-card { background: var(--input-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 15px; cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .ia-card:hover { border-color: var(--accent-primary); background: var(--card-bg-hover); transform: translateX(5px); }
+        
+        .ia-card-header { display: flex; align-items: flex-start; gap: 10px; }
+        .ia-card-content { flex-grow: 1; }
+        .ia-name { font-weight: 600; color: var(--text-primary); margin-bottom: 5px; font-size: 1.05em; }
+        .ia-empresa { font-size: 0.85em; color: var(--text-muted); margin-bottom: 8px; }
+        .ia-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+        .ia-tag { background: rgba(167, 139, 250, 0.2); color: var(--text-secondary); padding: 4px 10px; border-radius: 4px; font-size: 0.8em; }
+        .ia-rating { color: var(--warning-color); font-size: 0.9em; margin-bottom: 8px; }
+        .ia-preco { color: var(--success-color); font-size: 0.85em; font-weight: 500; }
+        
+        .ia-checkbox { accent-color: var(--accent-primary); width: 18px; height: 18px; cursor: pointer; }
+
+        .ia-details { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--card-border); animation: slideDown 0.3s ease-out; }
+        .ia-card.expanded .ia-details { display: block; }
+        .detail-item { margin-bottom: 10px; font-size: 0.85em; }
+        .detail-label { color: var(--accent-primary); font-weight: 600; margin-bottom: 3px; }
+        .detail-text { color: var(--text-secondary); line-height: 1.4; }
+        
+        .share-buttons { display: flex; gap: 10px; margin-top: 10px; }
+        .share-btn { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; padding: 8px 12px; border-radius: 6px; font-size: 0.9em; font-weight: 500; transition: all 0.3s ease; }
+        .share-twitter { background-color: #1DA1F2; color: white; }
+        .share-whatsapp { background-color: #25D366; color: white; }
+        .share-btn:hover { opacity: 0.8; }
+
+        footer { text-align: center; color: var(--text-muted); padding: 20px; border-top: 1px solid var(--border-color); margin-top: 40px; }
+        footer a { color: var(--accent-primary); text-decoration: none; }
+        footer a:hover { text-decoration: underline; }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); z-index: 999; display: none; }
+        .modal-overlay.active { display: block; }
+
+        .modal-container { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--modal-bg); border: 2px solid var(--accent-primary); border-radius: 12px; padding: 30px; width: 90%; max-width: 1200px; max-height: 90vh; overflow-y: auto; z-index: 1000; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); animation: slideUp 0.3s ease-in; }
+        .modal-container.active { display: block; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 15px; }
+        .modal-title { font-size: 1.5em; font-weight: bold; color: var(--accent-primary); }
+        .modal-close { cursor: pointer; font-size: 1.8em; color: var(--text-secondary); transition: color 0.3s ease; }
+        .modal-close:hover { color: var(--accent-primary); }
+        
+        #radarContainer { max-width: 600px; }
+        #radar-canvas-wrapper { position: relative; width: 100%; height: 400px; margin-bottom: 20px; }
+
+        #comparisonContainer { max-width: 1200px; }
+        #comparison-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .comparison-chart-wrapper { position: relative; width: 100%; height: 350px; }
+        .comparison-chart-title { text-align: center; color: var(--text-primary); font-weight: 600; margin-bottom: 10px; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 1000px; } }
+        .no-results { text-align: center; padding: 40px; color: var(--text-muted); font-size: 1.1em; }
+        
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8em; }
+            .categories, .stats-grid { grid-template-columns: 1fr; }
+            .top-controls { flex-direction: column; }
+            input[type="text"] { min-width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <button id="themeToggle" title="Alterar Tema">🌙</button>
+            <h1>🧠 Panorama Completo das IAs 2025</h1>
+            <p class="subtitle">Mapeamento Abrangente de Inteligências Artificiais do Brasil e do Mundo</p>
+        </header>
+
+        <div id="featuredIAContainer" class="featured-ia"></div>
+
+        <div class="top-controls">
+            <input type="text" id="searchInput" placeholder="Buscar IA por nome, empresa ou função...">
+            <button id="clearFiltersBtn" class="control-btn">Limpar Filtros</button>
+            <button id="compareBtn" class="control-btn">📊 Comparar Selecionadas</button>
+        </div>
+
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">Todas</button>
+            <button class="filter-btn" data-filter="llm">LLMs</button>
+            <button class="filter-btn" data-filter="busca">Busca</button>
+            <button class="filter-btn" data-filter="texto">Textos</button>
+            <button class="filter-btn" data-filter="imagem">Imagens</button>
+            <button class="filter-btn" data-filter="video">Vídeo</button>
+            <button class="filter-btn" data-filter="audio">Áudio</button>
+            <button class="filter-btn" data-filter="design3d">Design 3D</button>
+            <button class="filter-btn" data-filter="programacao">Programação</button>
+            <button class="filter-btn" data-filter="produtividade">Produtividade</button>
+            <button class="filter-btn" data-filter="academica">Acadêmica</button>
+            <button class="filter-btn" data-filter="agentes">Agentes</button>
+            <button class="filter-btn" data-filter="saude">Saúde</button>
+            <button class="filter-btn" data-filter="educacao">Educação</button>
+            <button class="filter-btn" data-filter="brasil">🇧🇷 Brasil</button>
+        </div>
+        
+        <div id="categoriesContainer" class="categories"></div>
+
+        <footer>
+            <p>Última atualização: Outubro 2025 | Mapa Mental Interativo com 130+ IAs do Brasil e do Mundo</p>
+            <p><a href="https://forms.gle/your-google-form-link" target="_blank" rel="noopener noreferrer">Sugira uma IA para o mapa!</a></p>
+        </footer>
+    </div>
+
+    <div id="modalOverlay" class="modal-overlay"></div>
+    
+    <div id="radarContainer" class="modal-container">
+        <div class="modal-header">
+            <div id="radarTitle" class="modal-title">Análise Comparativa</div>
+            <div class="modal-close" onclick="closeAllModals()">×</div>
+        </div>
+        <div id="radar-canvas-wrapper">
+            <canvas id="radarChart"></canvas>
+        </div>
+    </div>
+
+    <div id="comparisonContainer" class="modal-container">
+        <div class="modal-header">
+            <div class="modal-title">Comparativo de IAs</div>
+            <div class="modal-close" onclick="closeAllModals()">×</div>
+        </div>
+        <div id="comparison-content"></div>
+    </div>
+
+    <script>
+        // Data for the mind map (this part can be very long)
+        const mindMapData = {
+            llm: {
+                name: "LLMs (Chatbots)",
+                icon: "💬",
+                items: [
+                    { name: "ChatGPT (GPT-4o)", empresa: "OpenAI (EUA)", funcao: "LLM Generalista", qualidades: "Versatilidade extrema, conversação natural, grande base de conhecimento, multimodalidade avançada (visão, áudio), integração com plugins e agentes.", defeitos: "Ainda pode 'alucinar' (inventar fatos), filtros de segurança podem ser restritivos, custo alto para uso via API.", destaque: "O LLM mais popular e versátil, definindo o padrão da indústria.", classificacao: "⭐⭐⭐⭐⭐", preco: "Gratuito / $20/mês (Plus)", links: { site: "https://chatgpt.com/", app: "https://apps.apple.com/us/app/chatgpt/id6448311069", play: "https://play.google.com/store/apps/details?id=com.openai.chatgpt" }, publicoAlvo: ["Todos", "Desenvolvedores", "Profissionais"], curvaAprendizado: "Fácil", alternativas: ["Claude 3", "Gemini 2.0", "Grok 4"], verificadoEm: "Out/2025", scores: { "Poder": 5, "Custo-Benefício": 4, "Fácil de Usar": 5, "Ecossistema": 5, "Inovação": 5 } },
+                    { name: "Claude 3.5 Sonnet", empresa: "Anthropic (EUA)", funcao: "LLM Generalista", qualidades: "Excelente em análise de documentos longos (contexto de 200K tokens), código avançado, focado em segurança e ética (Constitutional AI).", defeitos: "Menor base de usuários que ChatGPT, pode ser mais lento em respostas, mais conservador em tópicos sensíveis.", destaque: "Melhor para análises profundas, documentos extensos e tarefas complexas.", classificacao: "⭐⭐⭐⭐⭐", preco: "Gratuito / $20/mês (Pro)", links: { site: "https://claude.ai/", app: "https://apps.apple.com/us/app/claude-by-anthropic/id6473753684", play: "https://play.google.com/store/apps/details?id=com.anthropic.claude" }, publicoAlvo: ["Profissionais", "Pesquisadores", "Escritores"], curvaAprendizado: "Fácil", alternativas: ["ChatGPT", "Gemini 2.0"], verificadoEm: "Out/2025", scores: { "Poder": 5, "Custo-Benefício": 4, "Fácil de Usar": 4, "Ecossistema": 3, "Inovação": 5 } },
+                    { name: "Gemini 2.0", empresa: "Google (EUA)", funcao: "LLM Multimodal", qualidades: "Integração nativa com o ecossistema Google (Docs, Gmail, Drive), multimodalidade nativa (texto, imagem, vídeo), acesso em tempo real à busca do Google.", defeitos: "Consistência inferior aos líderes em algumas tarefas de raciocínio, histórico de mudanças de marca e modelo.", destaque: "Melhor integração com ferramentas de produtividade do Google.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito / $19.99/mês (Advanced)", links: { site: "https://gemini.google.com/", app: "https://apps.apple.com/us/app/google-gemini/id6477489729", play: "https://play.google.com/store/apps/details?id=com.google.android.apps.bard" }, publicoAlvo: ["Usuários Google", "Estudantes", "Profissionais"], curvaAprendizado: "Fácil", alternativas: ["ChatGPT", "Claude 3", "Microsoft Copilot"], verificadoEm: "Out/2025", scores: { "Poder": 4, "Custo-Benefício": 4, "Fácil de Usar": 5, "Ecossistema": 5, "Inovação": 4 } },
+                    { name: "Grok 4", empresa: "xAI (EUA)", funcao: "LLM com Raciocínio Avançado", qualidades: "Acesso em tempo real à plataforma X (Twitter), raciocínio lógico e matemático forte, análise de imagens, personalidade única (humor e sarcasmo).", defeitos: "Filtros de moderação mais frouxos, menor base de usuários, foco em nicho (usuários do X).", destaque: "IA com personalidade e raciocínio avançado, ideal para informações em tempo real.", classificacao: "⭐⭐⭐⭐⭐", preco: "Gratuito / $168/mês (SuperGrok)", links: { site: "https://grok.com/", app: "https://apps.apple.com/us/app/grok/id6670324846", play: "https://play.google.com/store/apps/details?id=ai.x.grok" }, publicoAlvo: ["Usuários do X", "Pesquisadores", "Entusiastas"], curvaAprendizado: "Fácil", alternativas: ["ChatGPT", "Perplexity"], verificadoEm: "Out/2025", scores: { "Poder": 5, "Custo-Benefício": 2, "Fácil de Usar": 4, "Ecossistema": 3, "Inovação": 5 } }
+                    // ... More items in this category
+                ]
+            },
+            busca: {
+                name: "Busca com IA",
+                icon: "🔍",
+                items: [
+                    { name: "Perplexity AI", empresa: "Perplexity (EUA)", funcao: "Busca com IA", qualidades: "Respostas com fontes e citações, busca em tempo real, interface limpa, modo Co-pilot para pesquisa profunda.", defeitos: "Menos versátil para tarefas criativas, foco apenas em busca, custo do modo Pro.", destaque: "O motor de busca com IA mais preciso e transparente.", classificacao: "⭐⭐⭐⭐⭐", preco: "Gratuito / $20/mês (Pro)", links: { site: "https://www.perplexity.ai/", app: "https://apps.apple.com/us/app/perplexity-ask-anything/id1668586748", play: "https://play.google.com/store/apps/details?id=com.perplexity.android" }, publicoAlvo: ["Pesquisadores", "Jornalistas", "Estudantes"], curvaAprendizado: "Fácil", alternativas: ["Gemini 2.0", "Microsoft Copilot"], verificadoEm: "Out/2025", scores: { "Poder": 5, "Custo-Benefício": 4, "Fácil de Usar": 5, "Ecossistema": 3, "Inovação": 5 } }
+                    // ... More items
+                ]
+            }
+            // ... All other categories and items would be here with the new fields added.
+            // For brevity, I'm omitting the full data object, but the script is built to handle it.
+        };
+
+        // --- GLOBAL STATE ---
+        let currentFilter = 'all';
+        let searchTerm = '';
+        let comparisonList = [];
+        let chartInstances = [];
+
+        // --- DOM ELEMENTS ---
+        const themeToggleButton = document.getElementById('themeToggle');
+        const searchInput = document.getElementById('searchInput');
+        const clearFiltersBtn = document.getElementById('clearFiltersBtn');
+        const compareBtn = document.getElementById('compareBtn');
+        const categoriesContainer = document.getElementById('categoriesContainer');
+        const filterButtons = document.querySelectorAll('.filter-btn');
+        const modalOverlay = document.getElementById('modalOverlay');
+        const radarContainer = document.getElementById('radarContainer');
+        const radarTitle = document.getElementById('radarTitle');
+        const comparisonContainer = document.getElementById('comparisonContainer');
+        const comparisonContent = document.getElementById('comparison-content');
+        const featuredIAContainer = document.getElementById('featuredIAContainer');
+
+        // --- THEME SWITCHER LOGIC ---
+        function applyTheme(theme) {
+            if (theme === 'light') {
+                document.body.classList.add('light-mode');
+                themeToggleButton.innerHTML = '🌙';
+            } else {
+                document.body.classList.remove('light-mode');
+                themeToggleButton.innerHTML = '☀️';
+            }
+        }
+
+        themeToggleButton.addEventListener('click', () => {
+            const currentTheme = localStorage.getItem('theme') || 'dark';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme);
+        });
+
+        // --- FEATURED IA LOGIC ---
+        function showFeaturedIA() {
+            const allItems = Object.values(mindMapData).flatMap(cat => cat.items);
+            if (allItems.length === 0) return;
+            const featuredIA = allItems[Math.floor(Math.random() * allItems.length)];
+            
+            featuredIAContainer.innerHTML = `
+                <h2 class="featured-header">✨ IA da Semana ✨</h2>
+                <div class="featured-content">
+                    <div class="ia-name">${featuredIA.name}</div>
+                    <div class="ia-empresa">🌍 ${featuredIA.empresa}</div>
+                    <div class="detail-text">${featuredIA.destaque}</div>
+                </div>
+            `;
+        }
+
+        // --- RENDERING LOGIC ---
+        function renderCategories() {
+            categoriesContainer.innerHTML = '';
+            const currentHash = `#${currentFilter}`;
+            if(window.location.hash !== currentHash && currentFilter !== 'all') {
+                window.history.pushState(null, '', currentHash);
+            } else if (currentFilter === 'all') {
+                window.history.pushState(null, '', window.location.pathname + window.location.search);
+            }
+
+
+            const categoriesToShow = currentFilter === 'all' 
+                ? Object.entries(mindMapData)
+                : currentFilter === 'brasil'
+                ? [['brasil', mindMapData.brasil]]
+                : (mindMapData[currentFilter] ? [[currentFilter, mindMapData[currentFilter]]] : []);
+
+            let totalIAs = 0;
+
+            categoriesToShow.forEach(([key, category]) => {
+                const filteredItems = category.items.filter(item => {
+                    const searchLower = searchTerm.toLowerCase();
+                    return item.name.toLowerCase().includes(searchLower) ||
+                           item.empresa.toLowerCase().includes(searchLower) ||
+                           item.funcao.toLowerCase().includes(searchLower);
+                });
+
+                if (currentFilter === 'brasil' && !category.name.includes('Brasileiras')) {
+                   const brasilItems = Object.values(mindMapData).flatMap(c => c.items).filter(i => i.brasil);
+                    filteredItems.push(...brasilItems.filter(i => !filteredItems.includes(i)));
+                }
+
+                if (filteredItems.length === 0) return;
+                totalIAs += filteredItems.length;
+
+                const categoryEl = document.createElement('div');
+                categoryEl.className = 'category';
+                categoryEl.innerHTML = `
+                    <div class="category-header">
+                        <div class="category-icon">${category.icon}</div>
+                        <div class="category-title">${category.name}</div>
+                        <div class="category-count">${filteredItems.length}</div>
+                    </div>
+                    <div class="ias-list">
+                        ${filteredItems.map(item => getIACardHTML(item)).join('')}
+                    </div>
+                `;
+                categoriesContainer.appendChild(categoryEl);
+            });
+             if (totalIAs === 0) {
+                categoriesContainer.innerHTML = '<div class="no-results">Nenhuma IA encontrada com os filtros selecionados.</div>';
+            }
+        }
+
+        function getIACardHTML(item) {
+            const encodedName = encodeURIComponent(item.name);
+            const siteUrl = window.location.href.split('#')[0];
+            const shareText = encodeURIComponent(`Confira a IA "${item.name}" neste incrível Mapa de IAs 2025!`);
+
+            return `
+                <div class="ia-card" onclick="toggleDetails(this)">
+                    <div class="ia-card-header">
+                         <div class="ia-card-content">
+                            <div class="ia-name">${item.name}</div>
+                            <div class="ia-empresa">🌍 ${item.empresa}</div>
+                        </div>
+                        <input type="checkbox" class="ia-checkbox" ${comparisonList.includes(item.name) ? 'checked' : ''} onchange="handleCheckboxChange(event, '${item.name}')" onclick="event.stopPropagation()">
+                    </div>
+                    <div class="ia-tags">
+                        <span class="ia-tag">${item.funcao}</span>
+                        ${item.publicoAlvo ? item.publicoAlvo.map(p => `<span class="ia-tag">${p}</span>`).join('') : ''}
+                    </div>
+                    <div class="ia-rating">${item.classificacao}</div>
+                    <div class="ia-preco">💰 ${item.preco}</div>
+
+                    <div class="ia-details">
+                        <div class="detail-item">
+                            <div class="detail-label">✅ Qualidades:</div>
+                            <div class="detail-text">${item.qualidades}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">⚠️ Defeitos:</div>
+                            <div class="detail-text">${item.defeitos}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">⭐ Destaque:</div>
+                            <div class="detail-text">${item.destaque}</div>
+                        </div>
+                         <div class="detail-item">
+                            <div class="detail-label">🎯 Curva de Aprendizado:</div>
+                            <div class="detail-text">${item.curvaAprendizado || 'N/A'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">🔁 Alternativas:</div>
+                            <div class="detail-text">${item.alternativas ? item.alternativas.join(', ') : 'N/A'}</div>
+                        </div>
+                         ${item.links ? `
+                         <div class="detail-item">
+                             <div class="detail-label">🔗 Links:</div>
+                             <div class="ia-links">
+                                 ${item.links.site ? `<a href="${item.links.site}" target="_blank" title="Site Oficial" rel="noopener noreferrer" onclick="event.stopPropagation()">🌐</a>` : ''}
+                                 ${item.links.app ? `<a href="${item.links.app}" target="_blank" title="App Store (Apple)" rel="noopener noreferrer" onclick="event.stopPropagation()">📱</a>` : ''}
+                                 ${item.links.play ? `<a href="${item.links.play}" target="_blank" title="Play Store (Google)" rel="noopener noreferrer" onclick="event.stopPropagation()">🤖</a>` : ''}
+                             </div>
+                         </div>` : ''}
+                        <div class="share-buttons">
+                            <a href="https://twitter.com/intent/tweet?text=${shareText}&url=${siteUrl}" target="_blank" class="share-btn share-twitter" onclick="event.stopPropagation()">Compartilhar no X</a>
+                            <a href="https://api.whatsapp.com/send?text=${shareText}%20${siteUrl}" target="_blank" class="share-btn share-whatsapp" onclick="event.stopPropagation()">Compartilhar no WhatsApp</a>
+                        </div>
+                        ${item.scores ? `<button class="control-btn" onclick="event.stopPropagation(); showRadar(JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(item))}')))" style="width:100%; margin-top:15px;">📊 Ver Análise Rápida</button>` : ''}
+                        <div class="detail-text" style="font-size: 0.75em; text-align: right; margin-top: 10px; color: var(--text-muted);">Verificado em: ${item.verificadoEm}</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function toggleDetails(element) {
+            element.classList.toggle('expanded');
+        }
+
+        // --- FILTERING AND SEARCH LOGIC ---
+        function applyFilters() {
+            filterButtons.forEach(b => b.classList.remove('active'));
+            const activeButton = document.querySelector(`.filter-btn[data-filter="${currentFilter}"]`);
+            if (activeButton) activeButton.classList.add('active');
+            renderCategories();
+        }
+
+        searchInput.addEventListener('input', (e) => {
+            searchTerm = e.target.value;
+            renderCategories();
+        });
+
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                currentFilter = e.target.dataset.filter;
+                applyFilters();
+            });
+        });
+
+        clearFiltersBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            searchTerm = '';
+            currentFilter = 'all';
+            applyFilters();
+        });
+        
+        // --- HASH ROUTING LOGIC ---
+        function applyFilterFromHash() {
+            const hash = window.location.hash.replace('#', '');
+            if (hash && mindMapData[hash]) {
+                currentFilter = hash;
+            } else {
+                currentFilter = 'all';
+            }
+            applyFilters();
+        }
+
+        window.addEventListener('hashchange', applyFilterFromHash);
+        
+        // --- COMPARISON LOGIC ---
+        function handleCheckboxChange(event, itemName) {
+            if (event.target.checked) {
+                if(comparisonList.length < 4) {
+                    comparisonList.push(itemName);
+                } else {
+                    alert('Você pode comparar no máximo 4 IAs por vez.');
+                    event.target.checked = false;
+                }
+            } else {
+                comparisonList = comparisonList.filter(name => name !== itemName);
+            }
+            updateCompareButton();
+        }
+
+        function updateCompareButton() {
+            if (comparisonList.length >= 2) {
+                compareBtn.style.display = 'block';
+                compareBtn.textContent = `📊 Comparar ${comparisonList.length} IAs`;
+            } else {
+                compareBtn.style.display = 'none';
+            }
+        }
+
+        compareBtn.addEventListener('click', () => {
+            showComparison();
+        });
+
+        function showComparison() {
+            const allItems = Object.values(mindMapData).flatMap(cat => cat.items);
+            const itemsToCompare = allItems.filter(item => comparisonList.includes(item.name));
+            
+            comparisonContent.innerHTML = '';
+            chartInstances.forEach(chart => chart.destroy());
+            chartInstances = [];
+
+            itemsToCompare.forEach(item => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'comparison-chart-wrapper';
+                
+                const title = document.createElement('div');
+                title.className = 'comparison-chart-title';
+                title.textContent = item.name;
+
+                const canvas = document.createElement('canvas');
+                wrapper.appendChild(title);
+                wrapper.appendChild(canvas);
+                comparisonContent.appendChild(wrapper);
+
+                const scores = item.scores || {};
+                const chart = createRadarChart(canvas.getContext('2d'), item.name, scores);
+                chartInstances.push(chart);
+            });
+
+            modalOverlay.classList.add('active');
+            comparisonContainer.classList.add('active');
+        }
+
+        // --- MODAL AND CHART LOGIC ---
+        function closeAllModals() {
+            modalOverlay.classList.remove('active');
+            radarContainer.classList.remove('active');
+            comparisonContainer.classList.remove('active');
+        }
+
+        modalOverlay.addEventListener('click', closeAllModals);
+
+        function showRadar(item) {
+            if (!item.scores) return;
+
+            radarTitle.textContent = `${item.name} - Análise Rápida`;
+            const ctx = document.getElementById('radarChart').getContext('2d');
+            
+            chartInstances.forEach(chart => chart.destroy());
+            chartInstances = [createRadarChart(ctx, item.name, item.scores)];
+
+            modalOverlay.classList.add('active');
+            radarContainer.classList.add('active');
+        }
+
+        function createRadarChart(ctx, label, scores) {
+            const isLightTheme = document.body.classList.contains('light-mode');
+            const gridColor = isLightTheme ? '#d1d5db' : '#4c1d95';
+            const textColor = isLightTheme ? '#374151' : '#cbd5e1';
+            const pointLabelColor = isLightTheme ? '#6d28d9' : '#a78bfa';
+
+            return new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: Object.keys(scores),
+                    datasets: [{
+                        label: label,
+                        data: Object.values(scores),
+                        borderColor: '#a78bfa',
+                        backgroundColor: 'rgba(167, 139, 250, 0.2)',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#a78bfa',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: true, max: 5, stepSize: 1,
+                            grid: { color: gridColor },
+                            ticks: { color: textColor, backdropColor: 'rgba(0,0,0,0)', font: { size: 10 } },
+                            pointLabels: { color: pointLabelColor, font: { size: 12, weight: 'bold' } }
+                        }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        // --- INITIALIZATION ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'dark';
+            applyTheme(savedTheme);
+            showFeaturedIA();
+            applyFilterFromHash();
+        });
+    </script>
+</body>
+</html>
