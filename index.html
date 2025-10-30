@@ -6,48 +6,6 @@
     <title>Panorama Completo das IAs 2025 - Mapa Mental Interativo</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
     <style>
-        :root {
-            --bg-grad-start: #0f172a;
-            --bg-grad-mid: #1e1b4b;
-            --bg-grad-end: #312e81;
-            --text-primary: #e2e8f0;
-            --text-secondary: #cbd5e1;
-            --text-muted: #94a3b8;
-            --accent-primary: #a78bfa;
-            --accent-secondary: #60a5fa;
-            --border-color: #4c1d95;
-            --card-bg-start: #1e293b;
-            --card-bg-end: #0f172a;
-            --card-bg-hover: rgba(30, 41, 59, 0.8);
-            --card-border: #334155;
-            --input-bg: #1e293b;
-            --success-color: #86efac;
-            --warning-color: #fbbf24;
-            --shadow-color: rgba(167, 139, 250, 0.2);
-            --modal-bg: #1e293b;
-        }
-
-        body.light-mode {
-            --bg-grad-start: #f1f5f9;
-            --bg-grad-mid: #e0e7ff;
-            --bg-grad-end: #c7d2fe;
-            --text-primary: #1e293b;
-            --text-secondary: #334155;
-            --text-muted: #64748b;
-            --accent-primary: #6d28d9;
-            --accent-secondary: #3b82f6;
-            --border-color: #a78bfa;
-            --card-bg-start: #ffffff;
-            --card-bg-end: #f8fafc;
-            --card-bg-hover: #f1f5f9;
-            --card-border: #e2e8f0;
-            --input-bg: #f8fafc;
-            --success-color: #166534;
-            --warning-color: #b45309;
-            --shadow-color: rgba(109, 40, 217, 0.2);
-            --modal-bg: #ffffff;
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -56,151 +14,473 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, var(--bg-grad-start) 0%, var(--bg-grad-mid) 50%, var(--bg-grad-end) 100%);
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
             min-height: 100vh;
             padding: 20px;
-            color: var(--text-primary);
-            transition: background 0.3s ease, color 0.3s ease;
+            color: #e2e8f0;
         }
 
-        .container { max-width: 1400px; margin: 0 auto; }
-        header { text-align: center; margin-bottom: 40px; animation: fadeIn 0.8s ease-in; position: relative; }
-        h1 { font-size: 2.5em; margin-bottom: 10px; background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .subtitle { color: var(--text-secondary); font-size: 1.1em; margin-bottom: 20px; }
-        
-        #themeToggle {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background: var(--input-bg);
-            border: 2px solid var(--border-color);
-            color: var(--text-primary);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 1.5em;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
         }
-        #themeToggle:hover { transform: scale(1.1) rotate(15deg); }
 
-        .featured-ia {
-            background: linear-gradient(135deg, var(--card-bg-start), var(--card-bg-end));
-            border: 2px solid var(--accent-primary);
-            border-radius: 12px;
-            padding: 25px;
+        header {
+            text-align: center;
             margin-bottom: 40px;
-            animation: fadeIn 1s ease-in;
+            animation: fadeIn 0.8s ease-in;
         }
-        .featured-header { font-size: 1.5em; color: var(--accent-primary); margin-bottom: 15px; text-align: center; }
-        .featured-content { display: flex; flex-direction: column; gap: 8px; }
 
-        .top-controls {
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #a78bfa 0%, #60a5fa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: #cbd5e1;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+
+        .search-box {
+            margin-bottom: 30px;
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
             justify-content: center;
-            margin-bottom: 30px;
-            align-items: center;
         }
-        input[type="text"] { padding: 12px 20px; border: 2px solid var(--border-color); border-radius: 8px; background: var(--input-bg); color: var(--text-primary); font-size: 1em; min-width: 300px; transition: all 0.3s ease; }
-        input[type="text"]:focus { outline: none; border-color: var(--accent-primary); box-shadow: 0 0 10px var(--shadow-color); }
-        
-        .control-btn { padding: 10px 20px; border: 2px solid var(--border-color); background: var(--input-bg); color: var(--text-secondary); border-radius: 8px; cursor: pointer; transition: all 0.3s ease; font-weight: 500; }
-        .control-btn:hover { background: var(--accent-primary); color: var(--bg-grad-start); border-color: var(--accent-primary); }
-        #compareBtn { display: none; background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%); color: #fff; font-weight: bold; }
 
-        .filter-buttons { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 30px; }
-        .filter-btn { padding: 10px 20px; border: 2px solid var(--border-color); background: var(--input-bg); color: var(--text-secondary); border-radius: 8px; cursor: pointer; transition: all 0.3s ease; font-weight: 500; font-size: 0.9em; }
-        .filter-btn:hover, .filter-btn.active { background: var(--accent-primary); color: var(--bg-grad-start); border-color: var(--accent-primary); transform: translateY(-2px); }
+        input[type="text"] {
+            padding: 12px 20px;
+            border: 2px solid #4c1d95;
+            border-radius: 8px;
+            background: #1e293b;
+            color: #e2e8f0;
+            font-size: 1em;
+            min-width: 300px;
+            transition: all 0.3s ease;
+        }
 
-        .categories { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; margin-bottom: 40px; }
-        .category { background: linear-gradient(135deg, var(--card-bg-start) 0%, var(--card-bg-end) 100%); border: 2px solid var(--border-color); border-radius: 12px; padding: 25px; transition: all 0.3s ease; animation: slideUp 0.6s ease-out; }
-        .category:hover { border-color: var(--accent-primary); box-shadow: 0 10px 30px var(--shadow-color); transform: translateY(-5px); }
-        .category-header { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid var(--border-color); }
-        .category-icon { font-size: 2em; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; background: rgba(167, 139, 250, 0.1); border-radius: 8px; }
-        .category-title { font-size: 1.4em; font-weight: 600; color: var(--accent-primary); }
-        .category-count { margin-left: auto; background: rgba(167, 139, 250, 0.2); padding: 5px 12px; border-radius: 20px; font-size: 0.9em; color: var(--text-secondary); }
-        .ias-list { display: flex; flex-direction: column; gap: 15px; }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #a78bfa;
+            box-shadow: 0 0 10px rgba(167, 139, 250, 0.3);
+        }
 
-        .ia-card { background: var(--input-bg); border: 1px solid var(--card-border); border-radius: 8px; padding: 15px; cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden; }
-        .ia-card:hover { border-color: var(--accent-primary); background: var(--card-bg-hover); transform: translateX(5px); }
-        
-        .ia-card-header { display: flex; align-items: flex-start; gap: 10px; }
-        .ia-card-content { flex-grow: 1; }
-        .ia-name { font-weight: 600; color: var(--text-primary); margin-bottom: 5px; font-size: 1.05em; }
-        .ia-empresa { font-size: 0.85em; color: var(--text-muted); margin-bottom: 8px; }
-        .ia-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
-        .ia-tag { background: rgba(167, 139, 250, 0.2); color: var(--text-secondary); padding: 4px 10px; border-radius: 4px; font-size: 0.8em; }
-        .ia-rating { color: var(--warning-color); font-size: 0.9em; margin-bottom: 8px; }
-        .ia-preco { color: var(--success-color); font-size: 0.85em; font-weight: 500; }
-        
-        .ia-checkbox { accent-color: var(--accent-primary); width: 18px; height: 18px; cursor: pointer; }
+        .filter-buttons {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
 
-        .ia-details { display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--card-border); animation: slideDown 0.3s ease-out; }
-        .ia-card.expanded .ia-details { display: block; }
-        .detail-item { margin-bottom: 10px; font-size: 0.85em; }
-        .detail-label { color: var(--accent-primary); font-weight: 600; margin-bottom: 3px; }
-        .detail-text { color: var(--text-secondary); line-height: 1.4; }
-        
-        .share-buttons { display: flex; gap: 10px; margin-top: 10px; }
-        .share-btn { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; padding: 8px 12px; border-radius: 6px; font-size: 0.9em; font-weight: 500; transition: all 0.3s ease; }
-        .share-twitter { background-color: #1DA1F2; color: white; }
-        .share-whatsapp { background-color: #25D366; color: white; }
-        .share-btn:hover { opacity: 0.8; }
+        .filter-btn {
+            padding: 10px 20px;
+            border: 2px solid #4c1d95;
+            background: #1e293b;
+            color: #cbd5e1;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.9em;
+        }
 
-        footer { text-align: center; color: var(--text-muted); padding: 20px; border-top: 1px solid var(--border-color); margin-top: 40px; }
-        footer a { color: var(--accent-primary); text-decoration: none; }
-        footer a:hover { text-decoration: underline; }
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #a78bfa;
+            color: #0f172a;
+            border-color: #a78bfa;
+            transform: translateY(-2px);
+        }
 
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); z-index: 999; display: none; }
-        .modal-overlay.active { display: block; }
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
 
-        .modal-container { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: var(--modal-bg); border: 2px solid var(--accent-primary); border-radius: 12px; padding: 30px; width: 90%; max-width: 1200px; max-height: 90vh; overflow-y: auto; z-index: 1000; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); animation: slideUp 0.3s ease-in; }
-        .modal-container.active { display: block; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid var(--border-color); padding-bottom: 15px; }
-        .modal-title { font-size: 1.5em; font-weight: bold; color: var(--accent-primary); }
-        .modal-close { cursor: pointer; font-size: 1.8em; color: var(--text-secondary); transition: color 0.3s ease; }
-        .modal-close:hover { color: var(--accent-primary); }
-        
-        #radarContainer { max-width: 600px; }
-        #radar-canvas-wrapper { position: relative; width: 100%; height: 400px; margin-bottom: 20px; }
+        .category {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid #4c1d95;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            animation: slideUp 0.6s ease-out;
+        }
 
-        #comparisonContainer { max-width: 1200px; }
-        #comparison-content { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .comparison-chart-wrapper { position: relative; width: 100%; height: 350px; }
-        .comparison-chart-title { text-align: center; color: var(--text-primary); font-weight: 600; margin-bottom: 10px; }
+        .category:hover {
+            border-color: #a78bfa;
+            box-shadow: 0 10px 30px rgba(167, 139, 250, 0.2);
+            transform: translateY(-5px);
+        }
 
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes slideDown { from { opacity: 0; max-height: 0; } to { opacity: 1; max-height: 1000px; } }
-        .no-results { text-align: center; padding: 40px; color: var(--text-muted); font-size: 1.1em; }
-        
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #4c1d95;
+        }
+
+        .category-icon {
+            font-size: 2em;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(167, 139, 250, 0.1);
+            border-radius: 8px;
+        }
+
+        .category-title {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: #a78bfa;
+        }
+
+        .category-count {
+            margin-left: auto;
+            background: rgba(167, 139, 250, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            color: #cbd5e1;
+        }
+
+        .ias-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .ia-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ia-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(167, 139, 250, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .ia-card:hover {
+            border-color: #a78bfa;
+            background: rgba(30, 41, 59, 0.8);
+            transform: translateX(5px);
+        }
+
+        .ia-card:hover::before {
+            left: 100%;
+        }
+
+        .ia-name {
+            font-weight: 600;
+            color: #f1f5f9;
+            margin-bottom: 5px;
+            font-size: 1.05em;
+        }
+
+        .ia-empresa {
+            font-size: 0.85em;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+
+        .ia-funcao {
+            display: inline-block;
+            background: rgba(167, 139, 250, 0.2);
+            color: #cbd5e1;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-bottom: 8px;
+        }
+
+        .ia-rating {
+            color: #fbbf24;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+
+        .ia-preco {
+            color: #86efac;
+            font-size: 0.85em;
+            font-weight: 500;
+        }
+
+        .ia-details {
+            display: none;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #334155;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        .ia-card.expanded .ia-details {
+            display: block;
+        }
+
+        .detail-item {
+            margin-bottom: 10px;
+            font-size: 0.85em;
+        }
+
+        .detail-label {
+            color: #a78bfa;
+            font-weight: 600;
+            margin-bottom: 3px;
+        }
+
+        .detail-text {
+            color: #cbd5e1;
+            line-height: 1.4;
+        }
+
+        .ia-links {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .ia-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            background: rgba(96, 165, 250, 0.2);
+            color: #60a5fa;
+            text-decoration: none;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(96, 165, 250, 0.3);
+        }
+
+        .ia-links a:hover {
+            background: rgba(167, 139, 250, 0.3);
+            color: #a78bfa;
+            border-color: #a78bfa;
+            transform: translateY(-2px);
+        }
+
+        .stats {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid #4c1d95;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 20px;
+            background: rgba(167, 139, 250, 0.05);
+            border-radius: 8px;
+            border: 1px solid #4c1d95;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: 700;
+            color: #a78bfa;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: #cbd5e1;
+            font-size: 0.9em;
+        }
+
+        footer {
+            text-align: center;
+            color: #64748b;
+            padding: 20px;
+            border-top: 1px solid #4c1d95;
+            margin-top: 40px;
+        }
+
+        .legend {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid #4c1d95;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+            color: #cbd5e1;
+            line-height: 1.6;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                max-height: 0;
+            }
+            to {
+                opacity: 1;
+                max-height: 500px;
+            }
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #94a3b8;
+            font-size: 1.1em;
+        }
+
+        .radar-container {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #1e293b;
+            border: 2px solid #a78bfa;
+            border-radius: 12px;
+            padding: 30px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.3s ease-in;
+        }
+
+        .radar-container.active {
+            display: block;
+        }
+
+        .radar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #4c1d95;
+            padding-bottom: 15px;
+        }
+
+        .radar-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #a78bfa;
+        }
+
+        .radar-close {
+            cursor: pointer;
+            font-size: 1.5em;
+            color: #cbd5e1;
+            transition: color 0.3s ease;
+        }
+
+        .radar-close:hover {
+            color: #a78bfa;
+        }
+
+        .radar-canvas-wrapper {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            margin-bottom: 20px;
+        }
+
+        .radar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .radar-overlay.active {
+            display: block;
+        }
+
         @media (max-width: 768px) {
-            h1 { font-size: 1.8em; }
-            .categories, .stats-grid { grid-template-columns: 1fr; }
-            .top-controls { flex-direction: column; }
-            input[type="text"] { min-width: 100%; }
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .categories {
+                grid-template-columns: 1fr;
+            }
+
+            input[type="text"] {
+                min-width: 100%;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .filter-btn {
+                font-size: 0.8em;
+                padding: 8px 15px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <button id="themeToggle" title="Alterar Tema">🌙</button>
             <h1>🧠 Panorama Completo das IAs 2025</h1>
             <p class="subtitle">Mapeamento Abrangente de Inteligências Artificiais do Brasil e do Mundo</p>
         </header>
 
-        <div id="featuredIAContainer" class="featured-ia"></div>
-
-        <div class="top-controls">
+        <div class="search-box">
             <input type="text" id="searchInput" placeholder="Buscar IA por nome, empresa ou função...">
-            <button id="clearFiltersBtn" class="control-btn">Limpar Filtros</button>
-            <button id="compareBtn" class="control-btn">📊 Comparar Selecionadas</button>
         </div>
 
         <div class="filter-buttons">
@@ -220,125 +500,214 @@
             <button class="filter-btn" data-filter="educacao">Educação</button>
             <button class="filter-btn" data-filter="brasil">🇧🇷 Brasil</button>
         </div>
-        
+
+        <div class="legend">
+            <strong>⭐ Legenda:</strong> ⭐ = Excelente | ⭐⭐ = Muito Bom | ⭐⭐⭐ = Bom | ⭐⭐⭐⭐ = Ótimo | ⭐⭐⭐⭐⭐ = Excepcional<br>
+            <strong>🔗 Links:</strong> 🌐 = Site Oficial | 📱 = App Store (Apple) | 🤖 = Play Store (Google)
+        </div>
+
+        <div class="stats">
+            <div class="stats-grid" id="statsGrid"></div>
+        </div>
+
         <div id="categoriesContainer" class="categories"></div>
 
         <footer>
-            <p>Última atualização: Outubro 2025 | Mapa Mental Interativo com 130+ IAs do Brasil e do Mundo</p>
-            <p><a href="https://forms.gle/your-google-form-link" target="_blank" rel="noopener noreferrer">Sugira uma IA para o mapa!</a></p>
+            <p>Última atualização: Outubro 2025 | Mapa Mental Interativo com 130+ IAs do Brasil e do Mundo | Todos os links atualizados</p>
         </footer>
     </div>
 
-    <div id="modalOverlay" class="modal-overlay"></div>
-    
-    <div id="radarContainer" class="modal-container">
-        <div class="modal-header">
-            <div id="radarTitle" class="modal-title">Análise Comparativa</div>
-            <div class="modal-close" onclick="closeAllModals()">×</div>
+    <div id="radarOverlay" class="radar-overlay"></div>
+    <div id="radarContainer" class="radar-container">
+        <div class="radar-header">
+            <div class="radar-title" id="radarTitle">Análise Comparativa</div>
+            <div class="radar-close" onclick="closeRadar()">×</div>
         </div>
-        <div id="radar-canvas-wrapper">
+        <div class="radar-canvas-wrapper">
             <canvas id="radarChart"></canvas>
         </div>
     </div>
 
-    <div id="comparisonContainer" class="modal-container">
-        <div class="modal-header">
-            <div class="modal-title">Comparativo de IAs</div>
-            <div class="modal-close" onclick="closeAllModals()">×</div>
-        </div>
-        <div id="comparison-content"></div>
-    </div>
-
     <script>
-        // Data for the mind map (this part can be very long)
         const mindMapData = {
             llm: {
                 name: "LLMs (Chatbots)",
                 icon: "💬",
                 items: [
-                    { name: "ChatGPT (GPT-4o)", empresa: "OpenAI (EUA)", funcao: "LLM Generalista", qualidades: "Versatilidade extrema, conversação natural, grande base de conhecimento, multimodalidade avançada (visão, áudio), integração com plugins e agentes.", defeitos: "Ainda pode 'alucinar' (inventar fatos), filtros de segurança podem ser restritivos, custo alto para uso via API.", destaque: "O LLM mais popular e versátil, definindo o padrão da indústria.", classificacao: "⭐⭐⭐⭐⭐", preco: "Gratuito / $20/mês (Plus)", links: { site: "https://chatgpt.com/", app: "https://apps.apple.com/us/app/chatgpt/id6448311069", play: "https://play.google.com/store/apps/details?id=com.openai.chatgpt" }, publicoAlvo: ["Todos", "Desenvolvedores", "Profissionais"], curvaAprendizado: "Fácil", alternativas: ["Claude 3", "Gemini 2.0", "Grok 4"], verificadoEm: "Out/2025", scores: { "Poder": 5, "Custo-Benefício": 4, "Fácil de Usar": 5, "Ecossistema": 5, "Inovação": 5 } },
-                    { name: "Claude 3.5 Sonnet", empresa: "Anthropic (EUA)", funcao: "LLM Generalista", qualidades: "Excelente em análise de documentos longos (contexto de 200K tokens), código avançado, focado em segurança e ética (Constitutional AI).", defeitos: "Menor base de usuários que ChatGPT, pode ser mais lento em respostas, mais conservador em tópicos sensíveis.", destaque: "Melhor para análises profundas, documentos extensos e tarefas complexas.", classificacao: "⭐⭐⭐⭐⭐", preco: "Gratuito / $20/mês (Pro)", links: { site: "https://claude.ai/", app: "https://apps.apple.com/us/app/claude-by-anthropic/id6473753684", play: "https://play.google.com/store/apps/details?id=com.anthropic.claude" }, publicoAlvo: ["Profissionais", "Pesquisadores", "Escritores"], curvaAprendizado: "Fácil", alternativas: ["ChatGPT", "Gemini 2.0"], verificadoEm: "Out/2025", scores: { "Poder": 5, "Custo-Benefício": 4, "Fácil de Usar": 4, "Ecossistema": 3, "Inovação": 5 } },
-                    { name: "Gemini 2.0", empresa: "Google (EUA)", funcao: "LLM Multimodal", qualidades: "Integração nativa com o ecossistema Google (Docs, Gmail, Drive), multimodalidade nativa (texto, imagem, vídeo), acesso em tempo real à busca do Google.", defeitos: "Consistência inferior aos líderes em algumas tarefas de raciocínio, histórico de mudanças de marca e modelo.", destaque: "Melhor integração com ferramentas de produtividade do Google.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito / $19.99/mês (Advanced)", links: { site: "https://gemini.google.com/", app: "https://apps.apple.com/us/app/google-gemini/id6477489729", play: "https://play.google.com/store/apps/details?id=com.google.android.apps.bard" }, publicoAlvo: ["Usuários Google", "Estudantes", "Profissionais"], curvaAprendizado: "Fácil", alternativas: ["ChatGPT", "Claude 3", "Microsoft Copilot"], verificadoEm: "Out/2025", scores: { "Poder": 4, "Custo-Benefício": 4, "Fácil de Usar": 5, "Ecossistema": 5, "Inovação": 4 } },
-                    { name: "Grok 4", empresa: "xAI (EUA)", funcao: "LLM com Raciocínio Avançado", qualidades: "Acesso em tempo real à plataforma X (Twitter), raciocínio lógico e matemático forte, análise de imagens, personalidade única (humor e sarcasmo).", defeitos: "Filtros de moderação mais frouxos, menor base de usuários, foco em nicho (usuários do X).", destaque: "IA com personalidade e raciocínio avançado, ideal para informações em tempo real.", classificacao: "⭐⭐⭐⭐⭐", preco: "Gratuito / $168/mês (SuperGrok)", links: { site: "https://grok.com/", app: "https://apps.apple.com/us/app/grok/id6670324846", play: "https://play.google.com/store/apps/details?id=ai.x.grok" }, publicoAlvo: ["Usuários do X", "Pesquisadores", "Entusiastas"], curvaAprendizado: "Fácil", alternativas: ["ChatGPT", "Perplexity"], verificadoEm: "Out/2025", scores: { "Poder": 5, "Custo-Benefício": 2, "Fácil de Usar": 4, "Ecossistema": 3, "Inovação": 5 } }
-                    // ... More items in this category
+                    { name: "ChatGPT (GPT-4o)", empresa: "OpenAI (EUA)", funcao: "LLM Generalista", qualidades: "Versatilidade extrema, conversação natural, grande base de conhecimento, multimodalidade avançada (visão, áudio), integração com plugins e agentes.", defeitos: "Ainda pode 'alucinar' (inventar fatos), filtros de segurança podem ser restritivos, custo alto para uso via API.", destaque: "O LLM mais popular e versátil, definindo o padrão da indústria.", classificacao: "⭐⭐⭐⭐⭐", preco: "Gratuito / $20/mês (Plus)", links: { site: "https://chatgpt.com/", app: "https://apps.apple.com/us/app/chatgpt/id6448311069", play: "https://play.google.com/store/apps/details?id=com.openai.chatgpt" }, scores: { "Poder/Capacidade": 5, "Custo-Benefício": 4, "Facilidade de Uso": 5, "Ecossistema": 5, "Inovação": 5 } },
+                    { name: "Claude Sonnet 4.5", empresa: "Anthropic (EUA)", funcao: "LLM Generalista", qualidades: "Excelente em análise de documentos longos (contexto de 200K tokens), código avançado, focado em segurança e ética (Constitutional AI).", defeitos: "Menor base de usuários que ChatGPT, pode ser mais lento em respostas, mais conservador em tópicos sensíveis.", destaque: "Melhor para análises profundas, documentos extensos e tarefas complexas.", classificacao: "⭐⭐⭐⭐⭐", preco: "Gratuito / $20/mês (Pro)", links: { site: "https://claude.ai/", app: "https://apps.apple.com/us/app/claude-by-anthropic/id6473753684", play: "https://play.google.com/store/apps/details?id=com.anthropic.claude" }, scores: { "Poder/Capacidade": 5, "Custo-Benefício": 4, "Facilidade de Uso": 4, "Ecossistema": 3, "Inovação": 5 } },
+                    { name: "Gemini 2.0", empresa: "Google (EUA)", funcao: "LLM Multimodal", qualidades: "Integração nativa com o ecossistema Google (Docs, Gmail, Drive), multimodalidade nativa (texto, imagem, vídeo), acesso em tempo real à busca do Google.", defeitos: "Consistência inferior aos líderes em algumas tarefas de raciocínio, histórico de mudanças de marca e modelo.", destaque: "Melhor integração com ferramentas de produtividade do Google.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito / $19.99/mês (Advanced)", links: { site: "https://gemini.google.com/", app: "https://apps.apple.com/us/app/google-gemini/id6477489729", play: "https://play.google.com/store/apps/details?id=com.google.android.apps.bard" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 4, "Facilidade de Uso": 5, "Ecossistema": 5, "Inovação": 4 } },
+                    { name: "Grok 4", empresa: "xAI (EUA)", funcao: "LLM com Raciocínio Avançado", qualidades: "Acesso em tempo real à plataforma X (Twitter), raciocínio lógico e matemático forte, análise de imagens, personalidade única (humor e sarcasmo).", defeitos: "Filtros de moderação mais frouxos, menor base de usuários, foco em nicho (usuários do X).", destaque: "IA com personalidade e raciocínio avançado, ideal para informações em tempo real.", classificacao: "⭐⭐⭐⭐⭐", preco: "Gratuito / $168/mês (SuperGrok)", links: { site: "https://grok.com/", app: "https://apps.apple.com/us/app/grok/id6670324846", play: "https://play.google.com/store/apps/details?id=ai.x.grok" }, scores: { "Poder/Capacidade": 5, "Custo-Benefício": 2, "Facilidade de Uso": 4, "Ecossistema": 3, "Inovação": 5 } },
+                    { name: "Meta AI", empresa: "Meta (EUA)", funcao: "LLM Integrado", qualidades: "Integrado ao WhatsApp, Instagram, Facebook e Messenger, geração de imagens rápida, gratuito, baseado no poderoso Llama 3.", defeitos: "Menos poderoso que ChatGPT e Claude, conhecimento limitado em tópicos muito recentes, uso focado em entretenimento.", destaque: "A IA mais acessível e integrada às redes sociais.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito", links: { site: "https://ai.meta.com/", app: "https://apps.apple.com/us/app/meta-ai-vibes-ai-glasses/id1558240027", play: "https://play.google.com/store/apps/details?id=com.facebook.stella" }, scores: { "Poder/Capacidade": 3, "Custo-Benefício": 5, "Facilidade de Uso": 5, "Ecossistema": 5, "Inovação": 3 } },
+                    { name: "Mistral Large", empresa: "Mistral AI (França)", funcao: "LLM Europeu", qualidades: "Foco em privacidade e GDPR, código aberto (versões menores), desempenho competitivo, segurança robusta, forte em idiomas europeus.", defeitos: "Menor base de usuários, menos recursos que gigantes americanos, preço alto para a versão Large.", destaque: "Campeão europeu em IA ética e privada.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito / Pago por tokens", links: { site: "https://mistral.ai/", app: "https://apps.apple.com/us/app/le-chat-by-mistral-ai/id6740410176", play: "https://play.google.com/store/apps/details?id=ai.mistral.chat" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 3, "Facilidade de Uso": 4, "Ecossistema": 3, "Inovação": 4 } },
+                    { name: "DeepSeek-R1", empresa: "DeepSeek (China)", funcao: "LLM Open Source", qualidades: "Código aberto, custo baixíssimo (1/20 do GPT-4), raciocínio lógico forte, eficiente, excelente para fine-tuning.", defeitos: "Base de dados até 2023, sem acesso à internet em tempo real, foco em comunidade de desenvolvedores.", destaque: "Revolução em custo-benefício para desenvolvedores.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito / $0.14 por 1M tokens", links: { site: "https://www.deepseek.com/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 5, "Facilidade de Uso": 3, "Ecossistema": 4, "Inovação": 4 } },
+                    { name: "Llama 4", empresa: "Meta (EUA)", funcao: "LLM Open Source", qualidades: "Código aberto, customizável, bom em múltiplos idiomas, gratuito para desenvolvedores, excelente para rodar localmente.", defeitos: "Precisa de infraestrutura própria para rodar, menos polido que soluções comerciais.", destaque: "Líder em IA open source comercial.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito (open source)", links: { site: "https://ai.meta.com/llama/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 5, "Facilidade de Uso": 2, "Ecossistema": 5, "Inovação": 4 } }
                 ]
             },
             busca: {
                 name: "Busca com IA",
                 icon: "🔍",
                 items: [
-                    { name: "Perplexity AI", empresa: "Perplexity (EUA)", funcao: "Busca com IA", qualidades: "Respostas com fontes e citações, busca em tempo real, interface limpa, modo Co-pilot para pesquisa profunda.", defeitos: "Menos versátil para tarefas criativas, foco apenas em busca, custo do modo Pro.", destaque: "O motor de busca com IA mais preciso e transparente.", classificacao: "⭐⭐⭐⭐⭐", preco: "Gratuito / $20/mês (Pro)", links: { site: "https://www.perplexity.ai/", app: "https://apps.apple.com/us/app/perplexity-ask-anything/id1668586748", play: "https://play.google.com/store/apps/details?id=com.perplexity.android" }, publicoAlvo: ["Pesquisadores", "Jornalistas", "Estudantes"], curvaAprendizado: "Fácil", alternativas: ["Gemini 2.0", "Microsoft Copilot"], verificadoEm: "Out/2025", scores: { "Poder": 5, "Custo-Benefício": 4, "Fácil de Usar": 5, "Ecossistema": 3, "Inovação": 5 } }
-                    // ... More items
+                    { name: "Perplexity AI", empresa: "Perplexity (EUA)", funcao: "Busca com IA", qualidades: "Respostas com fontes e citações, busca em tempo real, interface limpa, modo Co-pilot para pesquisa profunda.", defeitos: "Menos versátil para tarefas criativas, foco apenas em busca, custo do modo Pro.", destaque: "O motor de busca com IA mais preciso e transparente.", classificacao: "⭐⭐⭐⭐⭐", preco: "Gratuito / $20/mês (Pro)", links: { site: "https://www.perplexity.ai/", app: "https://apps.apple.com/us/app/perplexity-ask-anything/id1668586748", play: "https://play.google.com/store/apps/details?id=com.perplexity.android" }, scores: { "Poder/Capacidade": 5, "Custo-Benefício": 4, "Facilidade de Uso": 5, "Ecossistema": 3, "Inovação": 5 } },
+                    { name: "You.com", empresa: "You.com (EUA)", funcao: "Busca com IA", qualidades: "Múltiplos modos (GPT-4, Claude, etc), foco em privacidade, sem rastreamento, customização de fontes.", defeitos: "Interface pode ser confusa, menos polido que concorrentes, foco em nicho.", destaque: "Privacidade em primeiro lugar com múltiplas IAs.", classificacao: "⭐⭐⭐", preco: "Gratuito / $15/mês (Pro)", links: { site: "https://you.com/", app: "https://apps.apple.com/us/app/you-com-search-assistant/id1534062334", play: "https://play.google.com/store/apps/details?id=com.you.browser" }, scores: { "Poder/Capacidade": 3, "Custo-Benefício": 3, "Facilidade de Uso": 3, "Ecossistema": 2, "Inovação": 4 } },
+                    { name: "Bing Chat (Copilot)", empresa: "Microsoft (EUA)", funcao: "Busca com IA", qualidades: "Integrado ao Bing, acesso em tempo real, integração com Edge e Windows, gratuito, multimodal (DALL-E 3 para imagens).", defeitos: "Menos poderoso que Perplexity em citações, menos privacidade.", destaque: "Busca integrada ao ecossistema Microsoft.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito", links: { site: "https://copilot.microsoft.com/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 5, "Facilidade de Uso": 4, "Ecossistema": 5, "Inovação": 3 } },
+                    { name: "Tavily", empresa: "Tavily (EUA)", funcao: "Busca com IA para Agentes", qualidades: "Otimizada para agentes de IA (RAG), busca precisa e concisa, API robusta, integração fácil para desenvolvedores.", defeitos: "Não é uma interface de usuário final, foco em developers.", destaque: "Melhor busca para agentes de IA (API).", classificacao: "⭐⭐⭐⭐", preco: "Gratuito / $25-$200/mês", links: { site: "https://tavily.com/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 4, "Facilidade de Uso": 2, "Ecossistema": 4, "Inovação": 4 } }
+                ]
+            },
+            texto: {
+                name: "Análise & Produção de Textos",
+                icon: "📝",
+                items: [
+                    { name: "Jasper Chat", empresa: "Jasper (EUA)", funcao: "Copywriting e Geração de Conteúdo", qualidades: "Templates para marketing, SEO otimizado, geração de conteúdo rápida, integração com ferramentas de marketing.", defeitos: "Caro, melhor para empresas, genérico às vezes, custo por palavra.", destaque: "Líder em marketing content com IA.", classificacao: "⭐⭐⭐⭐", preco: "$59-$125/mês", links: { site: "https://www.jasper.ai/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 2, "Facilidade de Uso": 4, "Ecossistema": 4, "Inovação": 3 } },
+                    { name: "QuillBot", empresa: "QuillBot (EUA)", funcao: "Paráfrase e Escrita", qualidades: "Paráfrase inteligente, verificação de plágio, múltiplos modos de escrita, fácil de usar, focado em estudantes e acadêmicos.", defeitos: "Menos poderoso que LLMs gerais, limitado em criatividade, foco em reescrita.", destaque: "Melhor para paráfrase e reescrita acadêmica.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito / $4.17-$9.99/mês", links: { site: "https://quillbot.com/", app: "https://apps.apple.com/us/app/quillbot-ai-writing-keyboard/id6446193796", play: "https://play.google.com/store/apps/details?id=com.quillbot.app" }, scores: { "Poder/Capacidade": 3, "Custo-Benefício": 5, "Facilidade de Uso": 5, "Ecossistema": 3, "Inovação": 3 } },
+                    { name: "Wordtune", empresa: "AI21 Labs (Israel)", funcao: "Edição e Refinamento de Textos", qualidades: "Edição contextual, múltiplos tons, sugestões inteligentes, integração com navegador e MS Word, focado em clareza.", defeitos: "Menos focado em geração do zero, melhor para edição.", destaque: "Melhor para edição e refinamento de textos.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito / $9.99-$19.99/mês", links: { site: "https://www.wordtune.com/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 4, "Facilidade de Uso": 5, "Ecossistema": 4, "Inovação": 3 } },
+                    { name: "Otter.ai", empresa: "Otter (EUA)", funcao: "Transcrição e Resumo", qualidades: "Transcrição de áudio/vídeo precisa, resumo automático, busca em transcrições, colaboração em reuniões (Zoom, Meet).", defeitos: "Foco em transcrição, menos em criação de conteúdo, limite de minutos no plano gratuito.", destaque: "Melhor para transcrição e resumo de reuniões.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito / $8.33-$20/mês", links: { site: "https://otter.ai/", app: "https://apps.apple.com/us/app/otter-ai-transcribe-record/id1271344148", play: "https://play.google.com/store/apps/details?id=com.aisense.otter" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 4, "Facilidade de Uso": 4, "Ecossistema": 5, "Inovação": 3 } },
+                    { name: "Copy.ai", empresa: "Copy.ai (EUA)", funcao: "Copywriting", qualidades: "Simples de usar, templates variados, bom custo-benefício, geração rápida, foco em redes sociais, colaboração em equipe.", defeitos: "Menos sofisticado que Jasper, qualidade variável, menos personalização.", destaque: "Custo-benefício em copy para pequenas empresas.", classificacao: "⭐⭐⭐", preco: "Gratuito / $49/mês", links: { site: "https://www.copy.ai/" }, scores: { "Poder/Capacidade": 3, "Custo-Benefício": 4, "Facilidade de Uso": 4, "Ecossistema": 3, "Inovação": 2 } },
+                    { name: "Writesonic", empresa: "Writesonic (EUA)", funcao: "Geração de Conteúdo", qualidades: "Geração rápida de conteúdo, SEO otimizado, templates para múltiplos formatos, preço acessível, foco em iniciantes.", defeitos: "Menos poderoso que Jasper, qualidade variável, menos customização.", destaque: "Alternativa mais acessível ao Jasper.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito / $12.67-$24.99/mês", links: { site: "https://writesonic.com/" }, scores: { "Poder/Capacidade": 3, "Custo-Benefício": 4, "Facilidade de Uso": 4, "Ecossistema": 3, "Inovação": 3 } },
+                    { name: "Grammarly", empresa: "Grammarly (EUA)", funcao: "Verificação de Gramática e Estilo", qualidades: "Correção de gramática em tempo real, sugestões de tom, detecção de plágio, integração universal (navegador, Word, Gmail), IA para reescrita.", defeitos: "Foco em correção, não em geração criativa, custo do plano premium.", destaque: "Ferramenta mais popular para correção de texto.", classificacao: "⭐⭐⭐⭐⭐", preco: "Gratuito / $12/mês (Premium)", links: { site: "https://www.grammarly.com/", app: "https://apps.apple.com/us/app/grammarly-ai-writing-assistant/id1358600636", play: "https://play.google.com/store/apps/details?id=com.grammarly.android.keyboard" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 4, "Facilidade de Uso": 5, "Ecossistema": 5, "Inovação": 4 } },
+                    { name: "Rytr", empresa: "Rytr (EUA)", funcao: "Geração de Conteúdo Gratuita", qualidades: "Gratuito com cota generosa, múltiplos tons de voz, templates variados, fácil de usar, bom para iniciantes.", defeitos: "Qualidade inferior aos pagos, limite de palavras no plano gratuito.", destaque: "Melhor IA de geração de texto gratuita.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito / $9.99-$29.99/mês", links: { site: "https://rytr.me/" }, scores: { "Poder/Capacidade": 3, "Custo-Benefício": 5, "Facilidade de Uso": 4, "Ecossistema": 2, "Inovação": 2 } },
+                    { name: "Hemingway Editor", empresa: "Hemingway (EUA)", funcao: "Edição de Clareza", qualidades: "Identifica sentenças complexas, sugestões de simplificação, verificação de tom, interface simples, foco em clareza.", defeitos: "Não é IA generativa, foco apenas em edição, menos recursos que Grammarly.", destaque: "Especialista em clareza e simplicidade de texto.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito (web) / $19.99 (desktop)", links: { site: "https://www.hemingwayapp.com/" }, scores: { "Poder/Capacidade": 3, "Custo-Benefício": 5, "Facilidade de Uso": 5, "Ecossistema": 2, "Inovação": 2 } },
+                    { name: "Sudowrite", empresa: "Sudowrite (EUA)", funcao: "Escrita Criativa com IA", qualidades: "Focado em ficção e criação criativa, geração de diálogos, expansão de cenas, edição criativa, comunidade de escritores.", defeitos: "Foco em ficção, menos útil para conteúdo corporativo, preço alto.", destaque: "Especialista em escrita criativa e ficção.", classificacao: "⭐⭐⭐⭐", preco: "$10-$25/mês", links: { site: "https://www.sudowrite.com/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 3, "Facilidade de Uso": 4, "Ecossistema": 3, "Inovação": 4 } },
+                    { name: "Copysmith", empresa: "Copysmith (EUA)", funcao: "Copywriting para E-commerce", qualidades: "Especializado em descrições de produtos, anúncios, emails de marketing, integração com Shopify, foco em vendas.", defeitos: "Foco específico em e-commerce, menos versátil.", destaque: "Especialista em copy para e-commerce.", classificacao: "⭐⭐⭐⭐", preco: "$19-$99/mês", links: { site: "https://www.copysmith.ai/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 3, "Facilidade de Uso": 4, "Ecossistema": 4, "Inovação": 3 } },
+                    { name: "Anyword", empresa: "Anyword (Israel)", funcao: "Geração de Conteúdo Orientada a Dados", qualidades: "Predição de desempenho de copy, otimização de taxa de conversão, análise de dados, integrações com plataformas de marketing.", defeitos: "Foco em métricas, menos criativo, preço alto.", destaque: "Única IA que prediz desempenho de copy.", classificacao: "⭐⭐⭐⭐⭐", preco: "$49-$499/mês", links: { site: "https://www.anyword.com/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 2, "Facilidade de Uso": 3, "Ecossistema": 4, "Inovação": 5 } },
+                    { name: "Slick Write", empresa: "Slick Write (EUA)", funcao: "Edição Online Gratuita", qualidades: "Verificação de gramática e estilo em tempo real, sugestões de melhoria, análise de legibilidade, 100% gratuito.", defeitos: "Menos poderoso que Grammarly, interface simples.", destaque: "Melhor ferramenta de edição gratuita.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito", links: { site: "https://www.slickwrite.com/" }, scores: { "Poder/Capacidade": 3, "Custo-Benefício": 5, "Facilidade de Uso": 4, "Ecossistema": 2, "Inovação": 2 } }
+                ]
+            },
+            imagem: {
+                name: "Geração de Imagens",
+                icon: "🎨",
+                items: [
+                    { name: "Midjourney v6", empresa: "Midjourney (EUA)", funcao: "Geração de Imagens", qualidades: "Qualidade artística superior, consistência, estilo único, comunidade ativa, focado em arte e estética.", defeitos: "Apenas via Discord (por enquanto), pago, curva de aprendizado para prompts.", destaque: "Rei da qualidade artística e estética.", classificacao: "⭐⭐⭐⭐⭐", preco: "$10-$120/mês", links: { site: "https://www.midjourney.com/" }, scores: { "Poder/Capacidade": 5, "Custo-Benefício": 3, "Facilidade de Uso": 2, "Ecossistema": 4, "Inovação": 5 } },
+                    { name: "DALL-E 3", empresa: "OpenAI (EUA)", funcao: "Geração de Imagens", qualidades: "Integrado ao ChatGPT, segue prompts fielmente, seguro, interface simples, excelente para texto em imagens.", defeitos: "Menos artístico que Midjourney, filtros de segurança às vezes exagerados.", destaque: "Melhor integração com texto e prompts complexos.", classificacao: "⭐⭐⭐⭐", preco: "Incluído no ChatGPT Plus", links: { site: "https://openai.com/dall-e-3" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 4, "Facilidade de Uso": 5, "Ecossistema": 5, "Inovação": 4 } },
+                    { name: "Flux AI", empresa: "Black Forest Labs (EUA)", funcao: "Geração de Imagens", qualidades: "Qualidade superior, velocidade rápida, geração de imagens realistas e artísticas, foco em fotorrealismo.", defeitos: "Novo no mercado, menos comunidade que Midjourney, custo por créditos.", destaque: "Melhor qualidade/velocidade para fotorrealismo.", classificacao: "⭐⭐⭐⭐⭐", preco: "Gratuito / $11.90-$59.90/mês", links: { site: "https://flux.ai/" }, scores: { "Poder/Capacidade": 5, "Custo-Benefício": 4, "Facilidade de Uso": 4, "Ecossistema": 3, "Inovação": 4 } },
+                    { name: "Stable Diffusion XL", empresa: "Stability AI (UK)", funcao: "Geração de Imagens", qualidades: "Código aberto, grátis, altamente customizável, roda localmente, grande comunidade de modelos (LoRAs).", defeitos: "Precisa de hardware potente, curva de aprendizado íngreme, qualidade variável.", destaque: "Open source e gratuito, líder em customização.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito (open source)", links: { site: "https://stability.ai/stable-diffusion", play: "https://play.google.com/store/apps/details?id=com.shifthackz.aisdv1.app" }, scores: { "Poder/Capacidade": 5, "Custo-Benefício": 5, "Facilidade de Uso": 1, "Ecossistema": 5, "Inovação": 5 } },
+                    { name: "Ideogram", empresa: "Ideogram (EUA)", funcao: "Geração de Imagens", qualidades: "Excelente em texto dentro de imagens (tipografia), interface intuitiva, gratuito com créditos, foco em design gráfico.", defeitos: "Menos artístico que Midjourney, limitações em estilo.", destaque: "Melhor para texto em imagens e design gráfico.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito / $10-$40/mês", links: { site: "https://ideogram.ai/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 5, "Facilidade de Uso": 5, "Ecossistema": 3, "Inovação": 4 } },
+                    { name: "Recraft", empresa: "Recraft (EUA)", funcao: "Geração de Imagens", qualidades: "Foco em design profissional, edição integrada (vetores, ícones), múltiplos estilos (pixel art, 3D), comercialmente seguro.", defeitos: "Menos conhecido, comunidade menor.", destaque: "Melhor para design profissional e vetores.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito / $10/mês", links: { site: "https://www.recraft.ai/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 4, "Facilidade de Uso": 4, "Ecossistema": 3, "Inovação": 4 } },
+                    { name: "Google Imagen 4", empresa: "Google (EUA)", funcao: "Geração de Imagens", qualidades: "Fotorrealista, velocidade em tempo real, integrado ao Gemini e Google Ads, ético (Marca d'água invisível).", defeitos: "Acesso limitado, menos artístico.", destaque: "Melhor fotorrealismo e integração Google.", classificacao: "⭐⭐⭐⭐", preco: "Incluído no Gemini Advanced", links: { site: "https://deepmind.google/models/imagen/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 4, "Facilidade de Uso": 5, "Ecossistema": 5, "Inovação": 3 } },
+                    { name: "Leonardo.AI", empresa: "Leonardo.AI (Austrália)", funcao: "Geração de Imagens", qualidades: "Focado em game design, consistência de personagens, estilos pré-definidos, interface amigável.", defeitos: "Menos versátil para arte geral, interface pode confundir iniciantes.", destaque: "Especialista em game art e assets.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito / $10-$48/mês", links: { site: "https://leonardo.ai/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 4, "Facilidade de Uso": 3, "Ecossistema": 4, "Inovação": 4 } },
+                    { name: "Adobe Firefly", empresa: "Adobe (EUA)", funcao: "Geração de Imagens", qualidades: "Integrado ao Photoshop/Illustrator, comercialmente seguro, ética de treinamento, fácil de usar.", defeitos: "Qualidade inferior aos líderes, limitado fora do ecossistema Adobe.", destaque: "Seguro para uso comercial e integrado a design.", classificacao: "⭐⭐⭐", preco: "Incluído no Creative Cloud", links: { site: "https://www.adobe.com/products/firefly.html" }, scores: { "Poder/Capacidade": 3, "Custo-Benefício": 3, "Facilidade de Uso": 4, "Ecossistema": 5, "Inovação": 2 } }
+                ]
+            },
+            video: {
+                name: "Geração de Vídeo",
+                icon: "🎬",
+                items: [
+                    { name: "Sora", empresa: "OpenAI (EUA)", funcao: "Geração de Vídeo", qualidades: "Qualidade cinematográfica, compreensão de física, vídeos longos (1min+), realismo impressionante.", defeitos: "Acesso limitado (lista de espera), muito caro, lento.", destaque: "Estado da arte em vídeo IA, o mais realista.", classificacao: "⭐⭐⭐⭐⭐", preco: "Acesso restrito / TBD", links: { site: "https://openai.com/sora" }, scores: { "Poder/Capacidade": 5, "Custo-Benefício": 1, "Facilidade de Uso": 3, "Ecossistema": 2, "Inovação": 5 } },
+                    { name: "Luma Dream Machine", empresa: "Luma AI (EUA)", funcao: "Geração de Vídeo", qualidades: "Qualidade cinematográfica, compreensão de física, integração com Ray3, rápido, acessível.", defeitos: "Custo por créditos, vídeos curtos (6 segundos).", destaque: "Alternativa rápida e acessível ao Sora.", classificacao: "⭐⭐⭐⭐⭐", preco: "Gratuito / $10-$200/mês", links: { site: "https://dreammachine.luma-ai.com/" }, scores: { "Poder/Capacidade": 5, "Custo-Benefício": 4, "Facilidade de Uso": 4, "Ecossistema": 3, "Inovação": 5 } },
+                    { name: "Runway Gen-3", empresa: "Runway (EUA)", funcao: "Geração e Edição de Vídeo", qualidades: "Ferramentas de edição profissionais (motion brush, inpainting), controle preciso, favorito dos editores.", defeitos: "Caro, curva de aprendizado, vídeos curtos.", destaque: "Favorito dos editores profissionais, melhor controle.", classificacao: "⭐⭐⭐⭐", preco: "$15-$95/mês", links: { site: "https://runwayml.com/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 3, "Facilidade de Uso": 3, "Ecossistema": 4, "Inovação": 4 } },
+                    { name: "Kling 2.1", empresa: "Kuaishou (China)", funcao: "Geração de Vídeo", qualidades: "Renderização em tempo real, integrado ao ecossistema chinês, rápido, acessível, forte em animação.", defeitos: "Qualidade inferior ao Sora, física menos precisa.", destaque: "Velocidade e escala chinesa, forte em animação.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito / Pago", links: { site: "https://kling.kuaishou.com/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 4, "Facilidade de Uso": 4, "Ecossistema": 3, "Inovação": 3 } },
+                    { name: "Pika Labs", empresa: "Pika (EUA)", funcao: "Geração de Vídeo", qualidades: "Interface simples, rápido, bom para iniciantes, preço acessível.", defeitos: "Qualidade inferior aos líderes, limitações em controle.", destaque: "Melhor para iniciantes.", classificacao: "⭐⭐⭐", preco: "Gratuito / $10-$70/mês", links: { site: "https://pika.art/" }, scores: { "Poder/Capacidade": 3, "Custo-Benefício": 4, "Facilidade de Uso": 5, "Ecossistema": 3, "Inovação": 3 } }
+                ]
+            },
+            audio: {
+                name: "Geração de Áudio",
+                icon: "🎵",
+                items: [
+                    { name: "ElevenLabs", empresa: "ElevenLabs (EUA/UK)", funcao: "Geração de Voz", qualidades: "Vozes ultra-realistas, clonagem de voz, 29+ idiomas, emoção natural, API robusta.", defeitos: "Questões éticas com clonagem, caro para muito uso.", destaque: "Melhor voz sintética do mercado.", classificacao: "⭐⭐⭐⭐⭐", preco: "Gratuito / $5-$330/mês", links: { site: "https://elevenlabs.io/" }, scores: { "Poder/Capacidade": 5, "Custo-Benefício": 3, "Facilidade de Uso": 4, "Ecossistema": 4, "Inovação": 5 } },
+                    { name: "Suno AI", empresa: "Suno (EUA)", funcao: "Geração de Música", qualidades: "Cria músicas originais completas, múltiplos gêneros, integração com prompts de texto, comunidade ativa.", defeitos: "Qualidade variável, direitos autorais questionáveis, custo recorrente.", destaque: "Criador de músicas com IA, o mais popular.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito / $6.99-$14.99/mês", links: { site: "https://www.suno.ai/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 4, "Facilidade de Uso": 5, "Ecossistema": 4, "Inovação": 5 } },
+                    { name: "Udio", empresa: "Udio (EUA)", funcao: "Geração de Música", qualidades: "Qualidade de áudio superior, controle fino sobre estilo, colaboração em tempo real, focado em produção.", defeitos: "Menos conhecida que Suno, interface em desenvolvimento.", destaque: "Qualidade de áudio profissional.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito / $10/mês", links: { site: "https://www.udio.com/" }, scores: { "Poder/Capacidade": 5, "Custo-Benefício": 4, "Facilidade de Uso": 4, "Ecossistema": 3, "Inovação": 4 } },
+                    { name: "Murf.ai", empresa: "Murf (EUA)", funcao: "Geração de Voz e Narração", qualidades: "Vozes realistas em múltiplos idiomas, editor de vídeo integrado, templates para vídeos, foco corporativo.", defeitos: "Interface complexa, menos natural que ElevenLabs.", destaque: "Melhor para narrações corporativas e vídeos explicativos.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito / $10-$99/mês", links: { site: "https://murf.ai/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 3, "Facilidade de Uso": 3, "Ecossistema": 4, "Inovação": 3 } }
+                ]
+            },
+            design3d: {
+                name: "Design 3D & Modelagem",
+                icon: "🏗️",
+                items: [
+                    { name: "Luma AI (3D)", empresa: "Luma AI (EUA)", funcao: "Geração de 3D", qualidades: "Cria modelos 3D a partir de imagens (NeRFs), qualidade alta, integração com Ray3, fotorrealismo 3D.", defeitos: "Novo recurso, ainda em desenvolvimento, exige múltiplas fotos.", destaque: "Geração de 3D a partir de fotos.", classificacao: "⭐⭐⭐⭐", preco: "Incluído no Luma Dream Machine", links: { site: "https://lumalabs.ai/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 4, "Facilidade de Uso": 3, "Ecossistema": 3, "Inovação": 5 } },
+                    { name: "Meshy", empresa: "Meshy (Singapura)", funcao: "Geração de 3D", qualidades: "Cria modelos 3D texturizados, suporte a múltiplos formatos, comunidade ativa, acessível.", defeitos: "Qualidade variável, menos conhecido.", destaque: "Geração de 3D acessível e rápida.", classificacao: "⭐⭐⭐", preco: "Gratuito / $10-$30/mês", links: { site: "https://www.meshy.ai/" }, scores: { "Poder/Capacidade": 3, "Custo-Benefício": 4, "Facilidade de Uso": 3, "Ecossistema": 3, "Inovação": 3 } },
+                    { name: "Planner 5D", empresa: "Planner 5D (Austrália)", funcao: "Design de Interiores 3D", qualidades: "IA para design de interiores, plantas 2D/3D, visualização em 4K, fácil de usar, grande biblioteca de móveis.", defeitos: "Limitado a design de interiores, interface pode ser complexa.", destaque: "Melhor para design de interiores com IA.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito / $4.99-$9.99/mês", links: { site: "https://planner5d.com/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 4, "Facilidade de Uso": 4, "Ecossistema": 3, "Inovação": 3 } }
+                ]
+            },
+            programacao: {
+                name: "Programação & Data Science",
+                icon: "💻",
+                items: [
+                    { name: "GitHub Copilot", empresa: "GitHub/Microsoft (EUA)", funcao: "Assistente de Código", qualidades: "Integração nativa IDEs, sugere código em tempo real, aprende seu estilo, suporte a 50+ linguagens, o mais popular.", defeitos: "Custo recorrente, pode sugerir código não otimizado, questões de licença de código.", destaque: "Padrão da indústria para codificação assistida.", classificacao: "⭐⭐⭐⭐⭐", preco: "$10/mês", links: { site: "https://github.com/features/copilot" }, scores: { "Poder/Capacidade": 5, "Custo-Benefício": 4, "Facilidade de Uso": 5, "Ecossistema": 5, "Inovação": 5 } },
+                    { name: "Cursor", empresa: "Cursor (EUA)", funcao: "IDE com IA", qualidades: "Chat integrado, edita múltiplos arquivos, compreende codebase inteira, rápido, focado em refatoração.", defeitos: "Relativamente novo, menos extensões que VSCode, curva de aprendizado.", destaque: "IDE do futuro, otimizada para IA.", classificacao: "⭐⭐⭐⭐⭐", preco: "Gratuito / $20/mês (Pro)", links: { site: "https://cursor.sh/" }, scores: { "Poder/Capacidade": 5, "Custo-Benefício": 4, "Facilidade de Uso": 4, "Ecossistema": 4, "Inovação": 5 } },
+                    { name: "Amazon CodeWhisperer", empresa: "AWS (EUA)", funcao: "Assistente de Código", qualidades: "Foco em segurança, detecção de vulnerabilidades, gratuito para uso individual, sugestões otimizadas para AWS.", defeitos: "Menos abrangente que Copilot, focado em ecossistema AWS.", destaque: "Melhor para segurança e AWS.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito / $19/mês (Professional)", links: { site: "https://aws.amazon.com/codewhisperer/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 5, "Facilidade de Uso": 4, "Ecossistema": 4, "Inovação": 3 } },
+                    { name: "CodiumAI", empresa: "CodiumAI (Israel)", funcao: "Testes e Análise de Código", qualidades: "Gera testes unitários automaticamente, análise de código, detecção de bugs, focado em qualidade de software.", defeitos: "Foco em testes, não gera código do zero, pode ser lento.", destaque: "Especialista em testes unitários.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito / $19/mês (Pro)", links: { site: "https://www.codium.ai/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 4, "Facilidade de Uso": 4, "Ecossistema": 3, "Inovação": 4 } },
+                    { name: "DataRobot", empresa: "DataRobot (EUA)", funcao: "AutoML e Data Science", qualidades: "Plataforma completa de AutoML, fácil de usar, focado em deploy e produção, alta precisão, líder empresarial.", defeitos: "Muito caro, complexo para pequenos projetos, curva de aprendizado.", destaque: "Líder em AutoML empresarial.", classificacao: "⭐⭐⭐⭐", preco: "Sob consulta", links: { site: "https://www.datarobot.com/" }, scores: { "Poder/Capacidade": 5, "Custo-Benefício": 1, "Facilidade de Uso": 3, "Ecossistema": 4, "Inovação": 3 } }
+                ]
+            },
+            produtividade: {
+                name: "Produtividade Empresarial",
+                icon: "📊",
+                items: [
+                    { name: "Salesforce Einstein Copilot", empresa: "Salesforce (EUA)", funcao: "IA para CRM", qualidades: "Integrado ao Salesforce, automação de tarefas CRM, insights de vendas, geração de conteúdo, focado em vendas e marketing.", defeitos: "Caro, depende do Salesforce, curva de aprendizado.", destaque: "Melhor IA para CRM.", classificacao: "⭐⭐⭐⭐", preco: "Incluído em planos Salesforce", links: { site: "https://www.salesforce.com/products/einstein/copilot/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 2, "Facilidade de Uso": 3, "Ecossistema": 5, "Inovação": 3 } },
+                    { name: "Microsoft Copilot Studio", empresa: "Microsoft (EUA)", funcao: "Criação de Copilots", qualidades: "Crie seus próprios copilots, integração com Microsoft 365, sem código necessário, focado em automação de processos.", defeitos: "Novo, menos maduro que alternativas.", destaque: "Plataforma para criar copilots personalizados.", classificacao: "⭐⭐⭐⭐", preco: "Sob consulta", links: { site: "https://www.microsoft.com/en-us/microsoft-copilot/copilot-studio" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 3, "Facilidade de Uso": 4, "Ecossistema": 5, "Inovação": 4 } },
+                    { name: "Notion AI", empresa: "Notion (EUA)", funcao: "Produtividade/Notas", qualidades: "Integrado ao Notion, resume documentos, gera texto em contexto, fácil de usar, focado em organização.", defeitos: "Depende do Notion, menos poderoso que LLMs dedicados.", destaque: "Melhor IA integrada a workspace e organização.", classificacao: "⭐⭐⭐⭐", preco: "$10/mês (add-on)", links: { site: "https://www.notion.so/product/ai" }, scores: { "Poder/Capacidade": 3, "Custo-Benefício": 4, "Facilidade de Uso": 5, "Ecossistema": 5, "Inovação": 3 } },
+                    { name: "Canva Magic Media", empresa: "Canva (Austrália)", funcao: "Design com IA", qualidades: "Gera imagens e vídeos, Magic Design para layouts automáticos, fácil de usar, integrado a plataforma de design.", defeitos: "Qualidade inferior a ferramentas especializadas, limitado em controle fino.", destaque: "Melhor IA integrada a design gráfico.", classificacao: "⭐⭐⭐⭐", preco: "Incluído no Canva Pro", links: { site: "https://www.canva.com/magic/", app: "https://apps.apple.com/us/app/canva-design-photo-video/id897446215", play: "https://play.google.com/store/apps/details?id=com.canva" }, scores: { "Poder/Capacidade": 3, "Custo-Benefício": 5, "Facilidade de Uso": 5, "Ecossistema": 5, "Inovação": 3 } }
+                ]
+            },
+            academica: {
+                name: "Pesquisa Acadêmica",
+                icon: "🎓",
+                items: [
+                    { name: "Consensus", empresa: "Consensus (EUA)", funcao: "Busca e Resumo Acadêmico", qualidades: "Busca em artigos científicos (sem alucinação), resume estudos, extrai dados de papers, focado em evidências, análise de tendências de pesquisa.", defeitos: "Limitado a artigos científicos, não é um LLM de propósito geral, cobertura limitada em periódicos muito novos.", destaque: "Melhor IA para pesquisa acadêmica baseada em evidências, sem alucinação.", classificacao: "⭐⭐⭐⭐⭐", preco: "Gratuito / $9.99/mês", links: { site: "https://consensus.app/" }, scores: { "Poder/Capacidade": 5, "Custo-Benefício": 5, "Facilidade de Uso": 4, "Ecossistema": 3, "Inovação": 5 } },
+                    { name: "Research Rabbit", empresa: "Research Rabbit (EUA)", funcao: "Descoberta de Artigos", qualidades: "Mapeia artigos relacionados, descobre novos estudos, visualização de redes de pesquisa, focado em conexões, integração com Zotero.", defeitos: "Não resume o conteúdo, apenas ajuda na descoberta, interface pode ser confusa para iniciantes.", destaque: "Melhor para visualização e descoberta de redes de pesquisa.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito", links: { site: "https://www.researchrabbit.ai/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 5, "Facilidade de Uso": 3, "Ecossistema": 4, "Inovação": 4 } },
+                    { name: "Paperpile", empresa: "Paperpile (Alemanha)", funcao: "Gerenciador de Referências com IA", qualidades: "Organiza referências, citações automáticas, assistente de escrita acadêmica com IA, integrado ao Google Docs, detecção automática de PDFs.", defeitos: "Focado em gerenciamento, menos em geração de conteúdo, custo recorrente.", destaque: "Melhor gerenciador de referências com IA integrado ao Google.", classificacao: "⭐⭐⭐⭐", preco: "$3.99/mês", links: { site: "https://paperpile.com/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 4, "Facilidade de Uso": 4, "Ecossistema": 5, "Inovação": 3 } },
+                    { name: "Elicit", empresa: "Elicit (EUA)", funcao: "Assistente de Pesquisa Acadêmica", qualidades: "Estrutura revisão bibliográfica, extrai dados de papers automaticamente, análise de literatura sistemática, focado em pesquisadores.", defeitos: "Interface complexa, curva de aprendizado, menos conhecido que Consensus.", destaque: "Especialista em revisão bibliográfica estruturada.", classificacao: "⭐⭐⭐⭐⭐", preco: "Gratuito / Pago", links: { site: "https://elicit.org/" }, scores: { "Poder/Capacidade": 5, "Custo-Benefício": 4, "Facilidade de Uso": 3, "Ecossistema": 3, "Inovação": 5 } },
+                    { name: "Scite", empresa: "Scite (EUA)", funcao: "Análise de Citações Inteligente", qualidades: "Analisa citações (Supporting/Mentioning/Contrasting), detecta viés em citações, verifica credibilidade de papers, focado em integridade científica.", defeitos: "Foco específico em citações, não é um motor de busca geral.", destaque: "Única IA que analisa tipo de citação (Supporting/Contrasting).", classificacao: "⭐⭐⭐⭐⭐", preco: "Gratuito / $9.99-$19.99/mês", links: { site: "https://scite.ai/" }, scores: { "Poder/Capacidade": 5, "Custo-Benefício": 4, "Facilidade de Uso": 4, "Ecossistema": 3, "Inovação": 5 } },
+                    { name: "Connected Papers", empresa: "Connected Papers (Israel)", funcao: "Mapeamento Visual de Pesquisa", qualidades: "Cria mapas visuais de papers relacionados, mostra conexões entre pesquisas, identifica papers-chave, interface intuitiva.", defeitos: "Foco em visualização, não em análise de conteúdo, menos detalhes que Research Rabbit.", destaque: "Melhor para visualização de redes de pesquisa.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito / $5-$12/mês", links: { site: "https://www.connectedpapers.com/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 5, "Facilidade de Uso": 5, "Ecossistema": 3, "Inovação": 4 } },
+                    { name: "Litmaps", empresa: "Litmaps (EUA)", funcao: "Descoberta de Literatura com IA", qualidades: "Mapas visuais de pesquisa, alertas de novos papers, análise de tendências, integração com Zotero, foco em descoberta contínua.", defeitos: "Subscription-based (pago), interface pode ser complexa.", destaque: "Melhor para monitoramento contínuo de literatura.", classificacao: "⭐⭐⭐⭐", preco: "$10-$30/mês", links: { site: "https://www.litmaps.com/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 3, "Facilidade de Uso": 3, "Ecossistema": 4, "Inovação": 4 } },
+                    { name: "Semantic Scholar", empresa: "Allen Institute (EUA)", funcao: "Motor de Busca Acadêmico com IA", qualidades: "Busca em 200+ milhões de papers, extração automática de dados, recomendações personalizadas, gratuito, acesso a PDFs.", defeitos: "Interface menos polida que concorrentes, menos detalhes que Consensus.", destaque: "Maior base de dados de papers com IA.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito", links: { site: "https://www.semanticscholar.org/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 5, "Facilidade de Uso": 3, "Ecossistema": 3, "Inovação": 3 } },
+                    { name: "Inciteful", empresa: "Inciteful (EUA)", funcao: "Análise de Pesquisa com IA", qualidades: "Análise de redes de citações, identifica papers semelhantes, análise de tendências, foco em pesquisadores.", defeitos: "Menos conhecido, interface em desenvolvimento.", destaque: "Especialista em análise de redes de citações.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito / Pago", links: { site: "https://inciteful.xyz/" }, scores: { "Poder/Capacidade": 3, "Custo-Benefício": 4, "Facilidade de Uso": 3, "Ecossistema": 2, "Inovação": 3 } },
+                    { name: "Jenni AI", empresa: "Jenni (EUA)", funcao: "Escrita Acadêmica com IA", qualidades: "Gerador de revisão de literatura, citações automáticas (APA, MLA, Chicago), assistente de escrita para teses, foco em acadêmicos.", defeitos: "Menos poderoso que LLMs gerais, foco específico em escrita.", destaque: "Especialista em geração de revisão de literatura.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito / $10-$20/mês", links: { site: "https://jenni.ai/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 4, "Facilidade de Uso": 4, "Ecossistema": 2, "Inovação": 3 } },
+                    { name: "Zotero", empresa: "Zotero (EUA)", funcao: "Gerenciador de Referências Open Source", qualidades: "Código aberto, gratuito, coleta automática de metadados, integração com navegador, comunidade ativa, suporte a notas com IA.", defeitos: "Interface menos moderna que Paperpile, curva de aprendizado.", destaque: "Melhor gerenciador de referências open source.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito", links: { site: "https://www.zotero.org/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 5, "Facilidade de Uso": 3, "Ecossistema": 5, "Inovação": 3 } },
+                    { name: "Mendeley Reference Manager", empresa: "Elsevier (Holanda)", funcao: "Gerenciador de Referências", qualidades: "Integrado ao ecossistema Elsevier, análise de papers, recomendações de leitura, suporte a múltiplos formatos.", defeitos: "Pago, menos inovador que Paperpile, foco em Elsevier.", destaque: "Integrado ao maior editor acadêmico.", classificacao: "⭐⭐⭐⭐", preco: "Pago", links: { site: "https://www.mendeley.com/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 2, "Facilidade de Uso": 3, "Ecossistema": 4, "Inovação": 2 } },
+                    { name: "Anara (Unriddle)", empresa: "Anara (EUA)", funcao: "Assistente de Leitura de Papers", qualidades: "Resumo automático de papers, perguntas e respostas sobre conteúdo, análise de PDFs, integração com navegador.", defeitos: "Novo no mercado, menos maduro que alternativas.", destaque: "Melhor para leitura rápida e compreensão de papers.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito / $15/mês", links: { site: "https://www.anara.com/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 4, "Facilidade de Uso": 4, "Ecossistema": 3, "Inovação": 3 } }
+                ]
+            },
+            agentes: {
+                name: "Agentes Autônomos",
+                icon: "🤖",
+                items: [
+                    { name: "Manus", empresa: "Manus (Brasil)", funcao: "Agente Autônomo Completo", qualidades: "Executa tarefas complexas autonomamente, acesso a internet, geração de conteúdo, análise de dados, desenvolvimento web, automação de workflows, o mais versátil.", defeitos: "Ainda em desenvolvimento, pode ter limitações em tarefas muito específicas.", destaque: "Agente autônomo mais versátil do mercado.", classificacao: "⭐⭐⭐⭐⭐", preco: "Baseado em créditos de uso", brasil: true, links: { site: "https://manus.im/" }, scores: { "Poder/Capacidade": 5, "Custo-Benefício": 4, "Facilidade de Uso": 4, "Ecossistema": 4, "Inovação": 5 } },
+                    { name: "Doubao 1.5-Pro", empresa: "ByteDance/TikTok (China)", funcao: "LLM com Agentes", qualidades: "Agentes personalizáveis com personalidade, voz e avatar, integração com TikTok, interface amigável, forte em entretenimento.", defeitos: "Base de dados desatualizada (junho 2021), menos preciso em fatos recentes.", destaque: "IA mais personalizada e humanizada.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito", links: { site: "https://www.doubao.com/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 5, "Facilidade de Uso": 5, "Ecossistema": 4, "Inovação": 4 } },
+                    { name: "Kimi K2", empresa: "Moonshot AI (China)", funcao: "LLM Contexto Longo", qualidades: "Milhões de tokens de contexto (recordista), MoE architecture, rápido, assistente cotidiano completo, focado em contexto.", defeitos: "Interface em chinês, menos conhecido globalmente.", destaque: "Recordista em janela de contexto.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito", links: { site: "https://www.moonshot.cn/" }, scores: { "Poder/Capacidade": 5, "Custo-Benefício": 5, "Facilidade de Uso": 3, "Ecossistema": 2, "Inovação": 5 } },
+                    { name: "Ernie Bot 5", empresa: "Baidu (China)", funcao: "LLM Multimodal", qualidades: "Forte em chinês, multimodal, integrado ao ecossistema Baidu, compreensão cultural chinesa, dominante no mercado chinês.", defeitos: "Apenas em chinês, performance inferior em inglês, dados até 2023.", destaque: "Dominante no mercado chinês.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito", links: { site: "https://yiyan.baidu.com/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 5, "Facilidade de Uso": 4, "Ecossistema": 4, "Inovação": 3 } }
+                ]
+            },
+            brasil: {
+                name: "🇧🇷 IAs Brasileiras",
+                icon: "🇧🇷",
+                items: [
+                    { name: "Manus", empresa: "Manus (Brasil)", funcao: "Agente Autônomo", qualidades: "Executa tarefas complexas, acesso a internet, geração de conteúdo, análise de dados, desenvolvimento web, o mais versátil.", defeitos: "Ainda em desenvolvimento.", destaque: "Agente autônomo brasileiro mais versátil.", classificacao: "⭐⭐⭐⭐⭐", preco: "Baseado em créditos", brasil: true, links: { site: "https://manus.im/" }, scores: { "Poder/Capacidade": 5, "Custo-Benefício": 4, "Facilidade de Uso": 4, "Ecossistema": 4, "Inovação": 5 } },
+                    { name: "Cérebro 2º - Fábio Scabeni", empresa: "Viasoft (Brasil)", funcao: "Sistema de IA para Gestão Pessoal", qualidades: "Segundo cérebro baseado em IA, framework metodológico (v87), mentor virtual, legado digital, integração com rotina pessoal e profissional.", defeitos: "Ainda em desenvolvimento, acesso limitado, foco em metodologia.", destaque: "Inovação brasileira em IA pessoal - Método do 2º Cérebro.", classificacao: "⭐⭐⭐⭐⭐", preco: "Curso disponível", brasil: true, links: { site: "https://lp.viasoft.com.br/curso-ia" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 3, "Facilidade de Uso": 3, "Ecossistema": 2, "Inovação": 5 } },
+                    { name: "NeuralMind", empresa: "NeuralMind (Brasil)", funcao: "Agentes de IA Generativa", qualidades: "Agentes autônomos para empresas, automação de fluxos, decisões assertivas, desenvolvida no Brasil, foco em eficiência operacional.", defeitos: "Menos conhecida internacionalmente, acesso limitado.", destaque: "Startup brasileira de IA generativa.", classificacao: "⭐⭐⭐⭐", preco: "Sob consulta", brasil: true, links: { site: "https://neuralmind.ai/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 3, "Facilidade de Uso": 3, "Ecossistema": 3, "Inovação": 4 } },
+                    { name: "beAnalytic", empresa: "beAnalytic (Brasil)", funcao: "BI, Engenharia de Dados e ML", qualidades: "Consultoria em dados, machine learning, business intelligence, base técnica sólida, focado em resultados empresariais.", defeitos: "Foco em consultoria, não é ferramenta self-service.", destaque: "Líder em consultoria de dados no Brasil.", classificacao: "⭐⭐⭐⭐", preco: "Sob consulta", brasil: true, links: { site: "https://beanalytic.com.br/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 3, "Facilidade de Uso": 2, "Ecossistema": 2, "Inovação": 3 } },
+                    { name: "Kunumi", empresa: "Kunumi (Brasil)", funcao: "Plataforma de IA Criativa", qualidades: "Foco em criatividade com IA, comunidade de criadores, expressão artística, projetos inovadores.", defeitos: "Nicho específico, menos recursos que plataformas gerais.", destaque: "IA para criatividade e expressão.", classificacao: "⭐⭐⭐", preco: "Gratuito / Pago", brasil: true, links: { site: "https://www.kunumi.com/" }, scores: { "Poder/Capacidade": 3, "Custo-Benefício": 3, "Facilidade de Uso": 3, "Ecossistema": 2, "Inovação": 4 } },
+                    { name: "Starya AI", empresa: "Starya AI (Brasil)", funcao: "Plataforma de IA Democrática", qualidades: "Democratiza acesso à IA, plataforma acessível, foco em inclusão, preço baixo.", defeitos: "Muito nova, ainda em desenvolvimento.", destaque: "Democratizando IA no Brasil.", classificacao: "⭐⭐⭐", preco: "Sob consulta", brasil: true, links: { site: "https://starya.ai/" }, scores: { "Poder/Capacidade": 3, "Custo-Benefício": 4, "Facilidade de Uso": 4, "Ecossistema": 2, "Inovação": 3 } }
+                ]
+            },
+            saude: {
+                name: "Saúde & Bem-Estar",
+                icon: "❤️",
+                items: [
+                    { name: "Ada Health", empresa: "Ada Health (Alemanha)", funcao: "Triagem e Diagnóstico", qualidades: "Avaliação de sintomas baseada em IA, alta precisão, foco em diagnóstico precoce, aplicativo móvel.", defeitos: "Não substitui médico, foco em triagem, limitações em doenças raras.", destaque: "Líder em avaliação de sintomas com IA.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito (App) / Pago (Empresas)", links: { site: "https://www.ada.com/", app: "https://apps.apple.com/us/app/ada-health-symptom-checker/id1454173738", play: "https://play.google.com/store/apps/details?id=com.ada_health.ada_health" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 5, "Facilidade de Uso": 5, "Ecossistema": 3, "Inovação": 4 } },
+                    { name: "Youper", empresa: "Youper (EUA)", funcao: "Saúde Mental e Emocional", qualidades: "Chatbot para saúde mental, monitoramento de humor, técnicas de TCC (Terapia Cognitivo-Comportamental), anonimato.", defeitos: "Não substitui terapia, foco em suporte leve.", destaque: "Melhor IA para suporte em saúde mental.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito / $9.99/mês (Premium)", links: { site: "https://www.youper.ai/", app: "https://apps.apple.com/us/app/youper-ai-mental-health/id1194200898", play: "https://play.google.com/store/apps/details?id=ai.youper.youper" }, scores: { "Poder/Capacidade": 3, "Custo-Benefício": 4, "Facilidade de Uso": 5, "Ecossistema": 2, "Inovação": 3 } },
+                    { name: "Voa Health", empresa: "Voa Health (Brasil)", funcao: "Assistente Clínico", qualidades: "Geração automática de documentos clínicos (anamnese, prescrições), focado em médicos e clínicas brasileiras, otimização de tempo.", defeitos: "Focado em burocracia, não em diagnóstico, nicho específico.", destaque: "IA brasileira para otimizar o trabalho do médico.", classificacao: "⭐⭐⭐⭐", preco: "Sob consulta", brasil: true, links: { site: "https://voa.health/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 3, "Facilidade de Uso": 4, "Ecossistema": 2, "Inovação": 3 } },
+                    { name: "Google Health AI", empresa: "Google (EUA)", funcao: "Diagnóstico por Imagem", qualidades: "Análise de imagens médicas (raios-X, ressonância), detecção precoce de doenças, pesquisa em larga escala, focado em hospitais.", defeitos: "Não é um produto de usuário final, acesso restrito.", destaque: "Líder em diagnóstico por imagem e pesquisa.", classificacao: "⭐⭐⭐⭐⭐", preco: "Sob consulta", links: { site: "https://health.google/" }, scores: { "Poder/Capacidade": 5, "Custo-Benefício": 2, "Facilidade de Uso": 2, "Ecossistema": 4, "Inovação": 5 } }
+                ]
+            },
+            educacao: {
+                name: "Educação & Aprendizado",
+                icon: "📚",
+                items: [
+                    { name: "Khanmigo", empresa: "Khan Academy (EUA)", funcao: "Tutor de IA", qualidades: "Tutor personalizado baseado em IA, focado em matemática e ciências, segue currículo escolar, ambiente seguro para estudantes.", defeitos: "Custo, foco em currículo americano, não é um LLM de propósito geral.", destaque: "Melhor tutor de IA para estudantes.", classificacao: "⭐⭐⭐⭐⭐", preco: "$4/mês (Doação)", links: { site: "https://www.khanacademy.org/khanmigo" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 5, "Facilidade de Uso": 5, "Ecossistema": 3, "Inovação": 4 } },
+                    { name: "Quizlet Q-Chat", empresa: "Quizlet (EUA)", funcao: "Assistente de Estudo", qualidades: "Gera flashcards, simula conversas de estudo, cria testes personalizados, focado em memorização e revisão.", defeitos: "Foco em memorização, menos em aprendizado conceitual.", destaque: "Melhor para revisão e memorização.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito / $7.99/mês (Plus)", links: { site: "https://quizlet.com/", app: "https://apps.apple.com/us/app/quizlet-flashcards-study/id546473125", play: "https://play.google.com/store/apps/details?id=com.quizlet.quizletandroid" }, scores: { "Poder/Capacidade": 3, "Custo-Benefício": 4, "Facilidade de Uso": 5, "Ecossistema": 4, "Inovação": 3 } },
+                    { name: "SciSpace (Typeset)", empresa: "SciSpace (EUA)", funcao: "Leitura e Compreensão Acadêmica", qualidades: "Explica papers complexos em linguagem simples, gera resumos, responde perguntas sobre o texto, focado em estudantes e pesquisadores.", defeitos: "Foco em leitura, não em escrita.", destaque: "Melhor para simplificar papers científicos.", classificacao: "⭐⭐⭐⭐", preco: "Gratuito / $15/mês", links: { site: "https://scispace.com/" }, scores: { "Poder/Capacidade": 4, "Custo-Benefício": 4, "Facilidade de Uso": 4, "Ecossistema": 3, "Inovação": 4 } },
+                    { name: "WolframAlpha", empresa: "Wolfram Research (EUA)", funcao: "Motor de Conhecimento Computacional", qualidades: "Respostas baseadas em dados e cálculos, forte em matemática, física, química, dados estatísticos, altamente preciso e factual.", defeitos: "Não é LLM conversacional, focado em fatos e cálculos.", destaque: "A IA mais precisa para dados factuais e cálculos.", classificacao: "⭐⭐⭐⭐⭐", preco: "Gratuito / $7.25/mês (Pro)", links: { site: "https://www.wolframalpha.com/", app: "https://apps.apple.com/us/app/wolframalpha/id334989259", play: "https://play.google.com/store/apps/details?id=com.wolfram.android.alpha" }, scores: { "Poder/Capacidade": 5, "Custo-Benefício": 4, "Facilidade de Uso": 3, "Ecossistema": 3, "Inovação": 5 } }
                 ]
             }
-            // ... All other categories and items would be here with the new fields added.
-            // For brevity, I'm omitting the full data object, but the script is built to handle it.
         };
 
-        // --- GLOBAL STATE ---
         let currentFilter = 'all';
         let searchTerm = '';
-        let comparisonList = [];
-        let chartInstances = [];
 
-        // --- DOM ELEMENTS ---
-        const themeToggleButton = document.getElementById('themeToggle');
-        const searchInput = document.getElementById('searchInput');
-        const clearFiltersBtn = document.getElementById('clearFiltersBtn');
-        const compareBtn = document.getElementById('compareBtn');
-        const categoriesContainer = document.getElementById('categoriesContainer');
-        const filterButtons = document.querySelectorAll('.filter-btn');
-        const modalOverlay = document.getElementById('modalOverlay');
-        const radarContainer = document.getElementById('radarContainer');
-        const radarTitle = document.getElementById('radarTitle');
-        const comparisonContainer = document.getElementById('comparisonContainer');
-        const comparisonContent = document.getElementById('comparison-content');
-        const featuredIAContainer = document.getElementById('featuredIAContainer');
-
-        // --- THEME SWITCHER LOGIC ---
-        function applyTheme(theme) {
-            if (theme === 'light') {
-                document.body.classList.add('light-mode');
-                themeToggleButton.innerHTML = '🌙';
-            } else {
-                document.body.classList.remove('light-mode');
-                themeToggleButton.innerHTML = '☀️';
-            }
-        }
-
-        themeToggleButton.addEventListener('click', () => {
-            const currentTheme = localStorage.getItem('theme') || 'dark';
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            localStorage.setItem('theme', newTheme);
-            applyTheme(newTheme);
-        });
-
-        // --- FEATURED IA LOGIC ---
-        function showFeaturedIA() {
-            const allItems = Object.values(mindMapData).flatMap(cat => cat.items);
-            if (allItems.length === 0) return;
-            const featuredIA = allItems[Math.floor(Math.random() * allItems.length)];
-            
-            featuredIAContainer.innerHTML = `
-                <h2 class="featured-header">✨ IA da Semana ✨</h2>
-                <div class="featured-content">
-                    <div class="ia-name">${featuredIA.name}</div>
-                    <div class="ia-empresa">🌍 ${featuredIA.empresa}</div>
-                    <div class="detail-text">${featuredIA.destaque}</div>
-                </div>
-            `;
-        }
-
-        // --- RENDERING LOGIC ---
         function renderCategories() {
-            categoriesContainer.innerHTML = '';
-            const currentHash = `#${currentFilter}`;
-            if(window.location.hash !== currentHash && currentFilter !== 'all') {
-                window.history.pushState(null, '', currentHash);
-            } else if (currentFilter === 'all') {
-                window.history.pushState(null, '', window.location.pathname + window.location.search);
-            }
-
+            const container = document.getElementById('categoriesContainer');
+            container.innerHTML = '';
 
             const categoriesToShow = currentFilter === 'all' 
                 ? Object.entries(mindMapData)
@@ -349,19 +718,27 @@
             let totalIAs = 0;
 
             categoriesToShow.forEach(([key, category]) => {
-                const filteredItems = category.items.filter(item => {
+                let filteredItems = category.items.filter(item => {
                     const searchLower = searchTerm.toLowerCase();
                     return item.name.toLowerCase().includes(searchLower) ||
                            item.empresa.toLowerCase().includes(searchLower) ||
                            item.funcao.toLowerCase().includes(searchLower);
                 });
 
-                if (currentFilter === 'brasil' && !category.name.includes('Brasileiras')) {
-                   const brasilItems = Object.values(mindMapData).flatMap(c => c.items).filter(i => i.brasil);
-                    filteredItems.push(...brasilItems.filter(i => !filteredItems.includes(i)));
+                if (currentFilter === 'brasil') {
+                     // Get all items marked as brasil:true from the entire dataset
+                    const brasilItems = Object.values(mindMapData).flatMap(cat => cat.items).filter(item => item.brasil);
+                    filteredItems = brasilItems.filter(item => {
+                        const searchLower = searchTerm.toLowerCase();
+                        return item.name.toLowerCase().includes(searchLower) ||
+                               item.empresa.toLowerCase().includes(searchLower) ||
+                               item.funcao.toLowerCase().includes(searchLower);
+                    });
                 }
 
+
                 if (filteredItems.length === 0) return;
+
                 totalIAs += filteredItems.length;
 
                 const categoryEl = document.createElement('div');
@@ -373,214 +750,128 @@
                         <div class="category-count">${filteredItems.length}</div>
                     </div>
                     <div class="ias-list">
-                        ${filteredItems.map(item => getIACardHTML(item)).join('')}
+                        ${filteredItems.map((item, idx) => `
+                            <div class="ia-card" onclick="toggleDetails(this)">
+                                <div class="ia-name">${item.name}</div>
+                                <div class="ia-empresa">🌍 ${item.empresa}</div>
+                                <div class="ia-funcao">${item.funcao}</div>
+                                <div class="ia-rating">${item.classificacao}</div>
+                                <div class="ia-preco">💰 ${item.preco}</div>
+                                <div class="ia-details">
+                                    <div class="detail-item">
+                                        <div class="detail-label">✅ Qualidades:</div>
+                                        <div class="detail-text">${item.qualidades}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="detail-label">⚠️ Defeitos:</div>
+                                        <div class="detail-text">${item.defeitos}</div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <div class="detail-label">⭐ Destaque:</div>
+                                        <div class="detail-text">${item.destaque}</div>
+                                    </div>
+                                    ${item.links ? `
+                                    <div class="detail-item">
+                                        <div class="detail-label">🔗 Links:</div>
+                                        <div class="ia-links">
+                                            ${item.links.site ? `<a href="${item.links.site}" target="_blank" title="Site Oficial" rel="noopener noreferrer" onclick="event.stopPropagation()">🌐</a>` : ''}
+                                            ${item.links.app ? `<a href="${item.links.app}" target="_blank" title="App Store (Apple)" rel="noopener noreferrer" onclick="event.stopPropagation()">📱</a>` : ''}
+                                            ${item.links.play ? `<a href="${item.links.play}" target="_blank" title="Play Store (Google)" rel="noopener noreferrer" onclick="event.stopPropagation()">🤖</a>` : ''}
+                                        </div>
+                                    </div>` : ''}
+                                    ${item.scores ? `
+                                    <div class="detail-item" style="margin-top: 15px;">
+                                        <button class="radar-btn" onclick="event.stopPropagation(); showRadar(JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(item))}')))" style="width: 100%; padding: 10px; background: linear-gradient(135deg, #a78bfa 0%, #60a5fa 100%); color: #0f172a; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 0.9em;">📊 Ver Análise Comparativa</button>
+                                    </div>` : ''}
+                                </div>
+                            </div>
+                        `).join('')}
                     </div>
                 `;
-                categoriesContainer.appendChild(categoryEl);
+                container.appendChild(categoryEl);
             });
-             if (totalIAs === 0) {
-                categoriesContainer.innerHTML = '<div class="no-results">Nenhuma IA encontrada com os filtros selecionados.</div>';
+
+            if (totalIAs === 0) {
+                container.innerHTML = '<div class="no-results">Nenhuma IA encontrada com os filtros selecionados.</div>';
             }
+
+            updateStats();
         }
 
-        function getIACardHTML(item) {
-            const encodedName = encodeURIComponent(item.name);
-            const siteUrl = window.location.href.split('#')[0];
-            const shareText = encodeURIComponent(`Confira a IA "${item.name}" neste incrível Mapa de IAs 2025!`);
-
-            return `
-                <div class="ia-card" onclick="toggleDetails(this)">
-                    <div class="ia-card-header">
-                         <div class="ia-card-content">
-                            <div class="ia-name">${item.name}</div>
-                            <div class="ia-empresa">🌍 ${item.empresa}</div>
-                        </div>
-                        <input type="checkbox" class="ia-checkbox" ${comparisonList.includes(item.name) ? 'checked' : ''} onchange="handleCheckboxChange(event, '${item.name}')" onclick="event.stopPropagation()">
-                    </div>
-                    <div class="ia-tags">
-                        <span class="ia-tag">${item.funcao}</span>
-                        ${item.publicoAlvo ? item.publicoAlvo.map(p => `<span class="ia-tag">${p}</span>`).join('') : ''}
-                    </div>
-                    <div class="ia-rating">${item.classificacao}</div>
-                    <div class="ia-preco">💰 ${item.preco}</div>
-
-                    <div class="ia-details">
-                        <div class="detail-item">
-                            <div class="detail-label">✅ Qualidades:</div>
-                            <div class="detail-text">${item.qualidades}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">⚠️ Defeitos:</div>
-                            <div class="detail-text">${item.defeitos}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">⭐ Destaque:</div>
-                            <div class="detail-text">${item.destaque}</div>
-                        </div>
-                         <div class="detail-item">
-                            <div class="detail-label">🎯 Curva de Aprendizado:</div>
-                            <div class="detail-text">${item.curvaAprendizado || 'N/A'}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">🔁 Alternativas:</div>
-                            <div class="detail-text">${item.alternativas ? item.alternativas.join(', ') : 'N/A'}</div>
-                        </div>
-                         ${item.links ? `
-                         <div class="detail-item">
-                             <div class="detail-label">🔗 Links:</div>
-                             <div class="ia-links">
-                                 ${item.links.site ? `<a href="${item.links.site}" target="_blank" title="Site Oficial" rel="noopener noreferrer" onclick="event.stopPropagation()">🌐</a>` : ''}
-                                 ${item.links.app ? `<a href="${item.links.app}" target="_blank" title="App Store (Apple)" rel="noopener noreferrer" onclick="event.stopPropagation()">📱</a>` : ''}
-                                 ${item.links.play ? `<a href="${item.links.play}" target="_blank" title="Play Store (Google)" rel="noopener noreferrer" onclick="event.stopPropagation()">🤖</a>` : ''}
-                             </div>
-                         </div>` : ''}
-                        <div class="share-buttons">
-                            <a href="https://twitter.com/intent/tweet?text=${shareText}&url=${siteUrl}" target="_blank" class="share-btn share-twitter" onclick="event.stopPropagation()">Compartilhar no X</a>
-                            <a href="https://api.whatsapp.com/send?text=${shareText}%20${siteUrl}" target="_blank" class="share-btn share-whatsapp" onclick="event.stopPropagation()">Compartilhar no WhatsApp</a>
-                        </div>
-                        ${item.scores ? `<button class="control-btn" onclick="event.stopPropagation(); showRadar(JSON.parse(decodeURIComponent('${encodeURIComponent(JSON.stringify(item))}')))" style="width:100%; margin-top:15px;">📊 Ver Análise Rápida</button>` : ''}
-                        <div class="detail-text" style="font-size: 0.75em; text-align: right; margin-top: 10px; color: var(--text-muted);">Verificado em: ${item.verificadoEm}</div>
-                    </div>
-                </div>
-            `;
-        }
-        
         function toggleDetails(element) {
             element.classList.toggle('expanded');
         }
 
-        // --- FILTERING AND SEARCH LOGIC ---
-        function applyFilters() {
-            filterButtons.forEach(b => b.classList.remove('active'));
-            const activeButton = document.querySelector(`.filter-btn[data-filter="${currentFilter}"]`);
-            if (activeButton) activeButton.classList.add('active');
-            renderCategories();
+        function updateStats() {
+            const statsGrid = document.getElementById('statsGrid');
+            statsGrid.innerHTML = '';
+
+            Object.entries(mindMapData).forEach(([key, category]) => {
+                const count = category.items.length;
+                statsGrid.innerHTML += `
+                    <div class="stat-item">
+                        <div class="stat-number">${count}</div>
+                        <div class="stat-label">${category.name}</div>
+                    </div>
+                `;
+            });
         }
 
-        searchInput.addEventListener('input', (e) => {
+        // Event Listeners
+        document.getElementById('searchInput').addEventListener('input', (e) => {
             searchTerm = e.target.value;
             renderCategories();
         });
 
-        filterButtons.forEach(btn => {
+        document.querySelectorAll('.filter-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
                 currentFilter = e.target.dataset.filter;
-                applyFilters();
+                renderCategories();
             });
         });
 
-        clearFiltersBtn.addEventListener('click', () => {
-            searchInput.value = '';
-            searchTerm = '';
-            currentFilter = 'all';
-            applyFilters();
-        });
-        
-        // --- HASH ROUTING LOGIC ---
-        function applyFilterFromHash() {
-            const hash = window.location.hash.replace('#', '');
-            if (hash && mindMapData[hash]) {
-                currentFilter = hash;
-            } else {
-                currentFilter = 'all';
+        // ** FUNÇÃO OTIMIZADA **
+        // A função agora apenas lê os scores que já estão nos dados.
+        // É mais simples, rápida e precisa.
+        function getIAScores(item) {
+            if (!item.scores) {
+                // Retorna um objeto vazio se os scores não estiverem definidos para evitar erros.
+                return {};
             }
-            applyFilters();
+            return item.scores;
         }
-
-        window.addEventListener('hashchange', applyFilterFromHash);
-        
-        // --- COMPARISON LOGIC ---
-        function handleCheckboxChange(event, itemName) {
-            if (event.target.checked) {
-                if(comparisonList.length < 4) {
-                    comparisonList.push(itemName);
-                } else {
-                    alert('Você pode comparar no máximo 4 IAs por vez.');
-                    event.target.checked = false;
-                }
-            } else {
-                comparisonList = comparisonList.filter(name => name !== itemName);
-            }
-            updateCompareButton();
-        }
-
-        function updateCompareButton() {
-            if (comparisonList.length >= 2) {
-                compareBtn.style.display = 'block';
-                compareBtn.textContent = `📊 Comparar ${comparisonList.length} IAs`;
-            } else {
-                compareBtn.style.display = 'none';
-            }
-        }
-
-        compareBtn.addEventListener('click', () => {
-            showComparison();
-        });
-
-        function showComparison() {
-            const allItems = Object.values(mindMapData).flatMap(cat => cat.items);
-            const itemsToCompare = allItems.filter(item => comparisonList.includes(item.name));
-            
-            comparisonContent.innerHTML = '';
-            chartInstances.forEach(chart => chart.destroy());
-            chartInstances = [];
-
-            itemsToCompare.forEach(item => {
-                const wrapper = document.createElement('div');
-                wrapper.className = 'comparison-chart-wrapper';
-                
-                const title = document.createElement('div');
-                title.className = 'comparison-chart-title';
-                title.textContent = item.name;
-
-                const canvas = document.createElement('canvas');
-                wrapper.appendChild(title);
-                wrapper.appendChild(canvas);
-                comparisonContent.appendChild(wrapper);
-
-                const scores = item.scores || {};
-                const chart = createRadarChart(canvas.getContext('2d'), item.name, scores);
-                chartInstances.push(chart);
-            });
-
-            modalOverlay.classList.add('active');
-            comparisonContainer.classList.add('active');
-        }
-
-        // --- MODAL AND CHART LOGIC ---
-        function closeAllModals() {
-            modalOverlay.classList.remove('active');
-            radarContainer.classList.remove('active');
-            comparisonContainer.classList.remove('active');
-        }
-
-        modalOverlay.addEventListener('click', closeAllModals);
 
         function showRadar(item) {
-            if (!item.scores) return;
+            const scores = getIAScores(item);
+            if (Object.keys(scores).length === 0) {
+                alert('Análise comparativa não disponível para esta IA.');
+                return;
+            }
 
-            radarTitle.textContent = `${item.name} - Análise Rápida`;
+            const overlay = document.getElementById('radarOverlay');
+            const container = document.getElementById('radarContainer');
+            const title = document.getElementById('radarTitle');
+            
+            title.textContent = item.name + ' - Análise Comparativa';
+            overlay.classList.add('active');
+            container.classList.add('active');
+            
+            overlay.onclick = closeRadar;
+            
             const ctx = document.getElementById('radarChart').getContext('2d');
             
-            chartInstances.forEach(chart => chart.destroy());
-            chartInstances = [createRadarChart(ctx, item.name, item.scores)];
-
-            modalOverlay.classList.add('active');
-            radarContainer.classList.add('active');
-        }
-
-        function createRadarChart(ctx, label, scores) {
-            const isLightTheme = document.body.classList.contains('light-mode');
-            const gridColor = isLightTheme ? '#d1d5db' : '#4c1d95';
-            const textColor = isLightTheme ? '#374151' : '#cbd5e1';
-            const pointLabelColor = isLightTheme ? '#6d28d9' : '#a78bfa';
-
-            return new Chart(ctx, {
+            if (window.radarChartInstance) {
+                window.radarChartInstance.destroy();
+            }
+            
+            window.radarChartInstance = new Chart(ctx, {
                 type: 'radar',
                 data: {
                     labels: Object.keys(scores),
                     datasets: [{
-                        label: label,
+                        label: item.name,
                         data: Object.values(scores),
                         borderColor: '#a78bfa',
                         backgroundColor: 'rgba(167, 139, 250, 0.2)',
@@ -597,24 +888,39 @@
                     maintainAspectRatio: false,
                     scales: {
                         r: {
-                            beginAtZero: true, max: 5, stepSize: 1,
-                            grid: { color: gridColor },
-                            ticks: { color: textColor, backdropColor: 'rgba(0,0,0,0)', font: { size: 10 } },
-                            pointLabels: { color: pointLabelColor, font: { size: 12, weight: 'bold' } }
+                            beginAtZero: true,
+                            max: 5,
+                            stepSize: 1,
+                            ticks: {
+                                color: '#cbd5e1',
+                                backdropColor: 'rgba(0,0,0,0)',
+                                font: { size: 10 }
+                            },
+                            grid: {
+                                color: '#4c1d95'
+                            },
+                            pointLabels: {
+                                color: '#a78bfa',
+                                font: { size: 12, weight: 'bold' }
+                            }
                         }
                     },
-                    plugins: { legend: { display: false } }
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
                 }
             });
         }
 
-        // --- INITIALIZATION ---
-        document.addEventListener('DOMContentLoaded', () => {
-            const savedTheme = localStorage.getItem('theme') || 'dark';
-            applyTheme(savedTheme);
-            showFeaturedIA();
-            applyFilterFromHash();
-        });
+        function closeRadar() {
+            document.getElementById('radarOverlay').classList.remove('active');
+            document.getElementById('radarContainer').classList.remove('active');
+        }
+
+        // Initial render
+        renderCategories();
     </script>
 </body>
 </html>
